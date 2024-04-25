@@ -35,7 +35,7 @@ class Category(db.Model):
 
 class Feedback(db.Model):
     __tablename__ = 'Feedbacks'
-
+    f_id=db.Column(db.Integer,primary_key=True)
     user_id = db.Column(db.ForeignKey('Users.user_id'), nullable=False)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
@@ -75,6 +75,7 @@ class Order(db.Model):
 class ProductHistory(db.Model):
     __tablename__ = 'ProductHistory'
 
+    ph_id=db.Column(db.Integer,primary_key=True)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
     date = db.Column(db.Text, nullable=False)
     price = db.Column(db.Integer, nullable=False)
@@ -120,6 +121,9 @@ class Seller(db.Model):
         self.email_id=email_id
         self.seller_name=seller_name
         self.addr_id=addr_id
+    
+    def get_id(self):
+        return self.seller_id
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -138,9 +142,12 @@ class User(db.Model):
         self.password=password
         self.addr_id=addr_id
 
+    def get_id(self):
+        return self.user_id
+
 class Wishlist(db.Model):
     __tablename__ = 'Wishlists'
-
+    w_id=db.Column(db.Integer,primary_key=True)
     user_id = db.Column(db.ForeignKey('Users.user_id'), nullable=False)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
 
