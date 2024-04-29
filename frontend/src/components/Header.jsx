@@ -14,11 +14,6 @@ import {
     Checkbox,
   } from "@material-tailwind/react";
 
-fetch('/api/user').then((res)=>res.json()).then(data=>{
-    if (data.status=='authenticated'){
-        
-    }
-})
 
 const AuthWithForm=()=>{
     const [email_id,setEmailId]=useState(' ');
@@ -181,12 +176,13 @@ export const Navbar = () => {
         if (data.status=='authenticated'){
             setUserAuth(data.user_id);
         }
-    })},[])
+    })},[userAuth])
     const [openNav,setOpenNav]=useState(false);
     const [activeLink,setActiveLink]=useState('/');
     function handleLinks(){
         setActiveLink(window.location.pathname);
     }
+    const [profileDropdown,setProfiledropdown]=useState(false);
     const navItems = [
         {
             name: "Home",
@@ -201,6 +197,7 @@ export const Navbar = () => {
             url: "/mobiles",
         },
     ]
+    let timeout;
     return (
         <header>
         <nav className="bg-gray-100 shadow-xl py-3 px-4 md:px-16 w-full top-0 h-14 border border-red-500">
@@ -228,9 +225,20 @@ export const Navbar = () => {
                                 </li>
                             )
                         })}
+                    {userAuth===false?<AuthWithForm/>:
+                    <>
+                    <div className="relative border border-red-600 w-full md:w-min">    
+                    <FaUserCircle className="hidden md:block text-3xl mx-auto" onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}/>
+                    <ul className={`md:${profileDropdown?"visible":"hidden"} md:absolute md:bg-white md:text-gray-700 rounded text-lg md:text-base  py-2 px-4 md:w-[120px] md:flex-col space-y-2 mt-2 `} onMouseOver={()=>{clearTimeout(timeout);setProfiledropdown(true)}} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}>
+                        <li><Link to={"/profile"}>Dashboard</Link></li>
+                        <li><Link to={"/orders"}>Orders</Link></li>
+                        <li><Link to={"/wishlist"}>Wislist</Link></li>
+                        <li><button className="flex" onClick={()=>{fetch("/api/user/logout",{method: "GET"}).then((res)=>res.json(),(rej)=>rej).then((data)=>{console.log(data.message)})
+            ;setUserAuth(false);}}>Logout<FaPowerOff className=" ml-1 my-auto text-gray-800"/></button></li>
                     </ul>
-                    {userAuth===false?<AuthWithForm/>:<><FaUserCircle/><FaPowerOff className="text-gray-800"/>
+                    </div>
                     </>}
+                    </ul>
                 </div>
             </div>
         </nav>

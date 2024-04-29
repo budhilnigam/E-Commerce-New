@@ -55,5 +55,9 @@ def about_user():
     else:
         return {"status":"notauthenticated"}
 
+@app.route("/user/logout")
+def user_logout():
+    logout_user()
+    return {"message":"Logout successful"}
 if __name__=="__main__":
     app.run()
