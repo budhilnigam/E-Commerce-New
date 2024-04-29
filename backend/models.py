@@ -1,6 +1,7 @@
 # coding: utf-8
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date,timedelta
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -41,8 +42,6 @@ class Feedback(db.Model):
     rating = db.Column(db.Integer, nullable=False)
     review = db.Column(db.Text)
 
-    product = db.relationship('Product', primaryjoin='Feedback.product_id == Product.product_id')
-    user = db.relationship('User', primaryjoin='Feedback.user_id == User.user_id')
 
     def __init__(self,user_id,product_id,rating,review=None):
         self.user_id=user_id
@@ -61,9 +60,6 @@ class Order(db.Model):
     date_delivery = db.Column(db.Text, nullable=False)
     addr_id = db.Column(db.Integer, nullable=False)
 
-    product = db.relationship('Product', primaryjoin='Order.product_id == Product.product_id')
-    user = db.relationship('User', primaryjoin='Order.user_id == User.user_id')
-
     def __init__(self,product_id,user_id,price,addr_id):
         self.product_id=product_id
         self.user_id=user_id
@@ -79,8 +75,6 @@ class ProductHistory(db.Model):
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
     date = db.Column(db.Text, nullable=False)
     price = db.Column(db.Integer, nullable=False)
-
-    product = db.relationship('Product', primaryjoin='ProductHistory.product_id == Product.product_id')
 
     def __init__(self,product_id,price):
         self.product_id=product_id
@@ -98,8 +92,6 @@ class Product(db.Model):
     price = db.Column(db.Integer, nullable=False)
     specs = db.Column(db.Text, nullable=False, default=' ')
 
-    seller = db.relationship('Seller', primaryjoin='Product.seller_id == Seller.seller_id')
-    users = db.relationship('User', secondary='Wishlists')
 
     def __init__(self,seller_id,product_name,category_id,brand,price,specs):
         self.seller_id=seller_id
@@ -125,20 +117,19 @@ class Seller(db.Model):
     def get_id(self):
         return self.seller_id
 
-class User(db.Model):
+class User(db.Model,UserMixin):
     __tablename__ = 'Users'
 
     user_id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text,nullable=False)
+    user_name = db.Column(db.Text,nullable=False)
     email_id = db.Column(db.Text, nullable=False,unique=True)
     password = db.Column(db.Text, nullable=False)
     addr_id = db.Column(db.ForeignKey('Addresses.addr_id'))
 
-    addr = db.relationship('Address', primaryjoin='User.addr_id == Address.addr_id')
 
     def __init__(self,username,email_id,password,addr_id=None):
         self.email_id=email_id
-        self.username=username
+        self.user_name=username
         self.password=password
         self.addr_id=addr_id
 
@@ -151,8 +142,6 @@ class Wishlist(db.Model):
     user_id = db.Column(db.ForeignKey('Users.user_id'), nullable=False)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
 
-    product = db.relationship('Product', primaryjoin='Wishlist.product_id == Product.product_id')
-    user = db.relationship('User', primaryjoin='Wishlist.user_id == User.user_id')
 
     def __init__(self,user_id,product_id):
         self.user_id=user_id

@@ -1,11 +1,10 @@
-import { useState } from "react"
-import { Link } from "react-router-dom";
+import React,{ useState } from "react";
 
 const LoginUser=()=>{
-    const [email_id,setEmailId]=useState(' ')
-    const [password,setPassword]=useState('a')
-    async function login_request(e,p){
-        const details = { "email_id":e,"password":p};
+    const [email_id,setEmailId]=useState(' ');
+    const [password,setPassword]=useState('a');
+    async function login_request(email,p){
+        const details = { "email_id":email+'s',"password":p+'p'};
         const response = await fetch("/api/user/login", {
             method: "POST",
             headers: {
@@ -15,6 +14,7 @@ const LoginUser=()=>{
             })
         if (response.ok){
             console.log("it worked");
+            this.props.history.push('/home')
         } else {
             console.log("Some error");
         }
@@ -30,13 +30,13 @@ const LoginUser=()=>{
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Log in
                         </h1>
-                        <form className="space-y-4 md:space-y-6" action={()=>{login_request(email_id,password)}}>
+                        <form className="space-y-4 md:space-y-6" onSubmit={(e)=>{e.preventDefault();login_request(email_id,password);}} method="POST">
                             <div>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                                 <input type="email" name="email_id" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="" onChange={e=>setEmailId(e.target.value)}/>
                             </div>
                             <div>
-                                <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
                                 <input type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" onChange={e=>setPassword(e.target.value)}/>
                             </div>
                             <div className="flex items-center justify-between">

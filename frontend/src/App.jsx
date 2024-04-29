@@ -6,12 +6,14 @@ import { BrowserRouter,Routes,Route,Link } from 'react-router-dom'
 import Home from './pages/home'
 import LoginUser from './pages/loginuser'
 import SignupUser from './pages/signupuser'
+import { Navbar } from './components/Header'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
       <BrowserRouter>
+      <Navbar/>
         <Routes>
           <Route path='/' element={<Home/>}></Route>
           <Route path='/login' element={<LoginUser/>}></Route>
