@@ -211,11 +211,11 @@ export const Navbar = () => {
     let timeout;
     return (
         <header>
-        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14">
+        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14 md:mb-10">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl text-2xl my-auto h-full ">
                 <Link to="/" className="flex flex-row items-center">
-                    <MdElectricBolt className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
-                    <div style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
+                    <MdElectricBolt onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}} className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
+                    <div onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
                     <button onClick={() => setOpenNav(!openNav)} className="p-2 ml-1 text-xl rounded-md md:hidden

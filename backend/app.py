@@ -1,4 +1,4 @@
-from flask import Flask,session,request,redirect,url_for
+from flask import Flask,session,request,send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager,current_user,login_required,login_user,logout_user
@@ -64,7 +64,7 @@ def user_logout():
 
 @app.route("/image/<str:path>")
 def image_file():
-    return send
+    return send_file
 
 if __name__=="__main__":
     app.run()
