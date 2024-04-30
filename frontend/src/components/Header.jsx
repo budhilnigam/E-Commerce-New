@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {MdElectricBolt,MdOutlineClose} from "react-icons/md";
-import {FaBars,FaUserCircle,FaPowerOff} from "react-icons/fa"
+import {FaBars,FaUserCircle,FaPowerOff, FaShoppingCart } from "react-icons/fa"
 import {
     Button,
     Dialog,
@@ -15,11 +15,13 @@ import {
   } from "@material-tailwind/react";
 
 
-const AuthWithForm=()=>{
+const AuthWithForm=(props)=>{
     const [email_id,setEmailId]=useState(' ');
     const [password,setPassword]=useState(' ');
     const [username,setUsername]=useState(' ');
-    async function login_request(email,password){
+    const userAuth=props.userAuth;
+    const setUserAuth=props.setUserAuth;
+    async function login_request(email,password,e=null){
         const details = { "email_id":email,"password":password};
         const response = await fetch("/api/user/login", {
             method: "POST",
@@ -27,9 +29,16 @@ const AuthWithForm=()=>{
             'Content-Type' : 'application/json'
             },
             body: JSON.stringify(details)
-            }).then((res)=>res.json(),(rej)=>rej).then((data)=>{console.log(data.message)})
+            }).then((res)=>res.json(),(rej)=>rej).then((data)=>{
+                console.log(data.message);
+                if(data.message=="Successful Login"){
+                    setUserAuth(true);
+                } else{
+
+                }
+            })
     } 
-    async function signup_request(username,email,password){
+    async function signup_request(username,email,password,e=null){
         const details = {"username":username, "email_id":email,"password":password};
         const response = await fetch("/api/user/signup", {
             method: "POST",
@@ -60,7 +69,7 @@ const AuthWithForm=()=>{
           className="bg-transparent shadow-none"
         >
           <Card className="mx-auto w-full max-w-[24rem]">
-            <form onSubmit={(e)=>{e.preventDefault();login_request(email_id,password)}}>
+            <form onSubmit={(e)=>{e.preventDefault();login_request(email_id,password,e)}}>
             <CardBody className="flex flex-col gap-4">
               <Typography variant="h4" color="blue-gray">
                 Sign In
@@ -175,10 +184,12 @@ export const Navbar = () => {
     useEffect(()=>{fetch('/api/user').then((res)=>res.json()).then(data=>{
         if (data.status=='authenticated'){
             setUserAuth(data.user_id);
+        } else {
+            setUserAuth(false);
         }
     })},[userAuth])
     const [openNav,setOpenNav]=useState(false);
-    const [activeLink,setActiveLink]=useState('/');
+    const [activeLink,setActiveLink]=useState(window.location.pathname);
     function handleLinks(){
         setActiveLink(window.location.pathname);
     }
@@ -200,11 +211,11 @@ export const Navbar = () => {
     let timeout;
     return (
         <header>
-        <nav className="bg-gray-100 shadow-xl py-3 px-4 md:px-16 w-full top-0 h-14 border border-red-500">
-            <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl border border-blue-200 text-2xl my-auto ">
+        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14">
+            <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl text-2xl my-auto h-full ">
                 <Link to="/" className="flex flex-row items-center">
-                    <MdElectricBolt className="mr-3 text-yellow-700" alt="Logo" />
-                    <div className=" text-aria ">ElectroMart</div>
+                    <MdElectricBolt className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
+                    <div style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
                     <button onClick={() => setOpenNav(!openNav)} className="p-2 ml-1 text-xl rounded-md md:hidden
@@ -225,17 +236,25 @@ export const Navbar = () => {
                                 </li>
                             )
                         })}
-                    {userAuth===false?<AuthWithForm/>:
+                    {userAuth===false?<AuthWithForm userAuth={userAuth} setUserAuth={setUserAuth}/>:
                     <>
-                    <div className="relative border border-red-600 w-full md:w-min">    
-                    <FaUserCircle className="hidden md:block text-3xl mx-auto" onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}/>
-                    <ul className={`md:${profileDropdown?"visible":"hidden"} md:absolute md:bg-white md:text-gray-700 rounded text-lg md:text-base  py-2 px-4 md:w-[120px] md:flex-col space-y-2 mt-2 `} onMouseOver={()=>{clearTimeout(timeout);setProfiledropdown(true)}} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}>
-                        <li><Link to={"/profile"}>Dashboard</Link></li>
-                        <li><Link to={"/orders"}>Orders</Link></li>
-                        <li><Link to={"/wishlist"}>Wislist</Link></li>
-                        <li><button className="flex" onClick={()=>{fetch("/api/user/logout",{method: "GET"}).then((res)=>res.json(),(rej)=>rej).then((data)=>{console.log(data.message)})
-            ;setUserAuth(false);}}>Logout<FaPowerOff className=" ml-1 my-auto text-gray-800"/></button></li>
+                    <span className="bg-black w-full h-[1px]"></span>
+                    <div className="relative w-full md:w-min">    
+                    <FaUserCircle className="hidden md:block text-3xl mx-auto text-gray-900 " onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}/>
+                    <ul className={`md:${profileDropdown?"visible":"hidden"} md:absolute md:bg-white md:text-gray-700 rounded text-lg md:text-base  py-2 px-4 md:w-[120px] md:flex-col space-y-4 mt-2 -left-20 `} onMouseOver={()=>{clearTimeout(timeout);setProfiledropdown(true)}} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}>
+                        <li onClick={()=>handleLinks()}><Link to={"/profile"}>Dashboard</Link></li>
+                        <li onClick={()=>handleLinks()}><Link to={"/orders"}>Orders</Link></li>
+                        <li onClick={()=>handleLinks()}><Link to={"/wishlist"}>Wislist</Link></li>
+                        <li className="md:hidden" onClick={()=>handleLinks()}><Link to={"/cart"}>Cart</Link></li>
+                        <li onClick={()=>setActiveLink("/")}><Link to={"/"}><button className="flex" onClick={()=>{fetch("/api/user/logout",{method: "GET"}).then((res)=>res.json(),(rej)=>rej).then((data)=>{console.log(data.message)})
+            ;setUserAuth(false);}}>Logout<FaPowerOff className=" ml-1 my-auto text-gray-800"/></button></Link></li>
                     </ul>
+                    </div>
+                    <div  onClick={()=>handleLinks()} className="relative md:flex hidden">
+                    <Link to={"/cart"}>
+                    <FaShoppingCart className="text-gray-900 text-3xl"/>
+                    <section className=" absolute left-3 bottom-4 bg-red-500 text-gray-100 rounded-xl text-[12px] w-[18px] h-[18px] flex justify-center items-center ">10</section>
+                    </Link>
                     </div>
                     </>}
                     </ul>

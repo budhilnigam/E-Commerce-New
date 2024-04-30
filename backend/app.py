@@ -17,8 +17,9 @@ login_manager_user.init_app(app)
 login_manager_user.login_view='/user/login'
 @login_manager_user.user_loader
 def load_user(userid):
-    return db.session.get(User,userid)
+    return db.session.get(Users,userid)
 
+import client
 @app.route('/user/signup',methods=['GET','POST'])
 def user_signup():
     response=request.get_json()
@@ -26,14 +27,15 @@ def user_signup():
     email_id=response['email_id']
     password=response['password']
     print(response)
-    if User.query.filter_by(email_id=email_id).first():
-        return {"error":"Another account is already using this account!"},302
+    if Users.query.filter_by(email_id=email_id).first():
+        return {"message":"Another account is already using this account!"},302
     else:
         encryptpassword=bcrypt.generate_password_hash(password=password)
-        user=User(username=username,email_id=email_id,password=encryptpassword)
+        user=Users(username=username,email_id=email_id,password=encryptpassword)
         db.session.add(user)
         db.session.commit()
-        return {"message":"Sign Up Successful"},200
+        login_user(user)
+        return {"message":"Successful Sigup"},200
 
 @app.route('/user/login',methods=['GET','POST'])
 def user_login():
@@ -42,10 +44,10 @@ def user_login():
     password=response['password']
 
     print(response)
-    if User.query.filter_by(email_id=email_id).first() and bcrypt.check_password_hash(db.session.query(User.password).filter(User.email_id==email_id).scalar(),password):
-        user=User.query.filter_by(email_id=email_id).first()
+    if Users.query.filter_by(email_id=email_id).first() and bcrypt.check_password_hash(db.session.query(Users.password).filter(Users.email_id==email_id).scalar(),password):
+        user=Users.query.filter_by(email_id=email_id).first()
         login_user(user)
-        return {"message":"Successful Login !"},200
+        return {"message":"Successful Login"},200
     return {"message":"Incorrect Credentials"},202
 
 @app.route("/user")
@@ -59,5 +61,10 @@ def about_user():
 def user_logout():
     logout_user()
     return {"message":"Logout successful"}
+
+@app.route("/image/<str:path>")
+def image_file():
+    return send
+
 if __name__=="__main__":
     app.run()

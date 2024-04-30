@@ -1,144 +1,31 @@
-import React,{ useState } from "react";
-import {
-    Button,
-    Dialog,
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
-    Typography,
-    Input,
-    Checkbox,
-  } from "@material-tailwind/react";
-
-  const DialogWithForm=()=>{
-    const [open, setOpen] = useState(false);
-    const [mode,setMode] =useState('signin');
-    const handleOpen = () => setOpen((cur) => !cur);
-    const handleMode=()=>{
-        if ( mode==='signin'){
-            setMode('signup');
-        } else if (mode==='signup') {
-            setMode('signin');
-        }
-    }
-    if(mode==='signin'){
-    return (
-      <>
-        <Button onClick={handleOpen}>Sign In</Button>
-        <Dialog
-          size="xs"
-          open={open && mode==='signin'}
-          handler={handleOpen}
-          className="bg-transparent shadow-none"
-        >
-          <Card className="mx-auto w-full max-w-[24rem]">
-            <CardBody className="flex flex-col gap-4">
-              <Typography variant="h4" color="blue-gray">
-                Sign In
-              </Typography>
-              <Typography
-                className="mb-3 font-normal"
-                variant="paragraph"
-                color="gray"
-              >
-                Enter your email and password to Sign In.
-              </Typography>
-              <Typography className="-mb-2" variant="h6">
-                Your Email
-              </Typography>
-              <Input label="Email" size="lg" />
-              <Typography className="-mb-2" variant="h6">
-                Your Password
-              </Typography>
-              <Input label="Password" size="lg" />
-              <div className="-ml-2.5 -mt-3">
-                <Checkbox label="Remember Me" />
-              </div>
-            </CardBody>
-            <CardFooter className="pt-0">
-              <Button variant="gradient" onClick={handleOpen} fullWidth>
-                Sign In
-              </Button>
-              <Typography variant="small" className="mt-4 flex justify-center">
-                Don&apos;t have an account?
-                <Typography
-                  as="a"
-                  variant="small"
-                  color="blue-gray"
-                  className="ml-1 font-bold"
-                  onClick={()=>handleMode()}
-                >
-                  Sign up
-                </Typography>
-              </Typography>
-            </CardFooter>
-          </Card>
-        </Dialog>
-      </>
-    );
-    }
-    else {
-        return (
-            <>
-                <Button onClick={handleOpen}>Sign In</Button>
-                <Dialog
-                    size="xs"
-                    open={open && mode==='signup'}
-                    handler={handleOpen}
-                    className="bg-transparent shadow-none"
-                >
-                <Card className="mx-auto w-full max-w-[24rem]">
-                    <CardBody className="flex flex-col gap-4">
-                    <Typography variant="h4" color="blue-gray">
-                        Sign Up
-                    </Typography>
-                    <Typography
-                        className="mb-3 font-normal"
-                        variant="paragraph"
-                        color="gray"
-                    >
-                        Enter your email and password to Sign In.
-                    </Typography>
-                    <Typography className="-mb-2" variant="h6">
-                        Your Email
-                    </Typography>
-                    <Input label="Email" size="lg" />
-                    <Typography className="-mb-2" variant="h6">
-                        Your Password
-                    </Typography>
-                    <Input label="Password" size="lg" />
-                    <div className="-ml-2.5 -mt-3">
-                        <Checkbox label="Remember Me" />
-                    </div>
-                    </CardBody>
-                    <CardFooter className="pt-0">
-                    <Button variant="gradient" onClick={handleOpen} fullWidth>
-                        Sign Up
-                    </Button>
-                    <Typography variant="small" className="mt-4 flex justify-center">
-                        Already have an account?
-                        <Typography
-                        as="a"
-                        variant="small"
-                        color="blue-gray"
-                        className="ml-1 font-bold"
-                        onClick={()=>handleMode()}
-                        >
-                        Sign in
-                        </Typography>
-                    </Typography>
-                    </CardFooter>
-                </Card>
-                </Dialog>
-            </>
-        );
-    }
-}
+import React,{ useState,useEffect } from "react";
+import Product from "../components/Product";
 const Home=()=>{
+    const [allProducts,setAllProducts]=useState([]);
+    async function fetch_allProducts(){
+        fetch("/api/products").then(res=>res.json()).then(data=>{console.log(data.products);setAllProducts(data.products);})
+    }
+    useEffect(()=>{
+        fetch_allProducts()
+    },[]);
     return (
         <>
             <h1>Home</h1>
+            <section className="py-20">
+            <div className="container mx-auto">
+            <h1 className="text-3xl font-semibold mb-10 text-center">Explore Our Products</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 lg:mx-8 gap-[30px] max-w-sm mx-auto md:max-w-none md:mx-0">
+               {allProducts.map((product) => {
+                return (
+                    <>
+                    <p>Hi</p>
+                    <Product product={product} key={product.product_id}/>
+                    </>
+                );
+                })}
+            </div>
+            </div>
+            </section>
         </>
     )
 }

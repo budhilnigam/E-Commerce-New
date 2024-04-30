@@ -2,13 +2,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date,timedelta
 from flask_login import UserMixin
+from dataclasses import dataclass
 
 db = SQLAlchemy()
 
 
 
-class Address(db.Model):
-    __tablename__ = 'Addresses'
+class Addresses(db.Model):
 
     addr_id = db.Column(db.Integer, primary_key=True)
     line1 = db.Column(db.Text, nullable=False)
@@ -26,16 +26,14 @@ class Address(db.Model):
         self.type=type
 
 
-class Category(db.Model):
-    __tablename__ = 'Categories'
+class Categories(db.Model):
 
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.Text, nullable=False)
 
 
 
-class Feedback(db.Model):
-    __tablename__ = 'Feedbacks'
+class Feedbacks(db.Model):
     f_id=db.Column(db.Integer,primary_key=True)
     user_id = db.Column(db.ForeignKey('Users.user_id'), nullable=False)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
@@ -49,8 +47,7 @@ class Feedback(db.Model):
         self.rating=rating
         self.review=review
 
-class Order(db.Model):
-    __tablename__ = 'Orders'
+class Orders(db.Model):
 
     order_id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
@@ -69,7 +66,6 @@ class Order(db.Model):
         self.date_delivery=date.today()+timedelta(days=5)
 
 class ProductHistory(db.Model):
-    __tablename__ = 'ProductHistory'
 
     ph_id=db.Column(db.Integer,primary_key=True)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
@@ -81,10 +77,10 @@ class ProductHistory(db.Model):
         self.price=price
         self.date=date.today()
 
-class Product(db.Model):
-    __tablename__ = 'Products'
+class Products(db.Model):
 
     product_id = db.Column(db.Integer, primary_key=True)
+    product_image = db.Column(db.String)
     seller_id = db.Column(db.ForeignKey('Sellers.seller_id'), nullable=False)
     product_name = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.Integer)
@@ -93,16 +89,16 @@ class Product(db.Model):
     specs = db.Column(db.Text, nullable=False, default=' ')
 
 
-    def __init__(self,seller_id,product_name,category_id,brand,price,specs):
+    def __init__(self,seller_id,product_name,category_id,brand,price,specs,product_image=None):
         self.seller_id=seller_id
         self.product_name=product_name
         self.category_id=category_id
         self.brand=brand
         self.price=price
         self.specs=specs
+        self.product_image=product_image
 
-class Seller(db.Model):
-    __tablename__ = 'Sellers'
+class Sellers(db.Model):
 
     seller_id = db.Column(db.Integer, primary_key=True)
     email_id = db.Column(db.Text, nullable=False)
@@ -117,8 +113,7 @@ class Seller(db.Model):
     def get_id(self):
         return self.seller_id
 
-class User(db.Model,UserMixin):
-    __tablename__ = 'Users'
+class Users(db.Model,UserMixin):
 
     user_id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.Text,nullable=False)
@@ -136,8 +131,7 @@ class User(db.Model,UserMixin):
     def get_id(self):
         return self.user_id
 
-class Wishlist(db.Model):
-    __tablename__ = 'Wishlists'
+class Wishlists(db.Model):
     w_id=db.Column(db.Integer,primary_key=True)
     user_id = db.Column(db.ForeignKey('Users.user_id'), nullable=False)
     product_id = db.Column(db.ForeignKey('Products.product_id'), nullable=False)
