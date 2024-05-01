@@ -211,19 +211,19 @@ export const Navbar = () => {
     let timeout;
     return (
         <header>
-        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14 md:mb-10">
+        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14 mb-10">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl text-2xl my-auto h-full ">
                 <Link to="/" className="flex flex-row items-center">
                     <MdElectricBolt onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}} className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
                     <div onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
-                    <button onClick={() => setOpenNav(!openNav)} className="p-2 ml-1 text-xl rounded-md md:hidden
+                    <button className="p-2 ml-1 text-xl rounded-md md:hidden
                      focus:outline-none focus:ring-2 focus:ring-gray-200 ">
-                        {!openNav ? <FaBars /> : <MdOutlineClose />}
+                        {!openNav ? <FaBars  onMouseOver={()=>setOpenNav(true)} /> : <MdOutlineClose onClick={()=>{setOpenNav(false);setTimeout(()=>null,1000)}}/>}
                     </button>
                 </div>
-                <div className={`${openNav ? "right-0" : "-right-[100%]"} top-[72px] bg-gray-100 md:bg-none
+                <div onMouseLeave={()=>setTimeout(()=>setOpenNav(false),200)} className={`${openNav ? "right-0" : "-right-[100%]"} top-14 border border-l-black border-t-black md:border-none bg-gray-100 md:bg-none
                  transition-all duration-300 md:h-auto h-full shadow-xl md:shadow-none fixed md:static md:justify-between items-center w-[50%]
                   flex-col md:items-center md:flex-row flex md:w-auto md:order-1 md:space-x-8 space-y-6 md:space-y-0`}>
                     <ul className="flex flex-col items-center space-y-5 md:space-y-0 font-medium md:flex-row md:space-x-8 mt-20 md:mt-0">
@@ -241,7 +241,7 @@ export const Navbar = () => {
                     <span className="bg-black w-full h-[1px]"></span>
                     <div className="relative w-full md:w-min">    
                     <FaUserCircle className="hidden md:block text-3xl mx-auto text-gray-900 " onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}/>
-                    <ul className={`md:${profileDropdown?"visible":"hidden"} md:absolute md:bg-white md:text-gray-700 rounded text-lg md:text-base  py-2 px-4 md:w-[120px] md:flex-col space-y-4 mt-2 -left-20 `} onMouseOver={()=>{clearTimeout(timeout);setProfiledropdown(true)}} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}>
+                    <ul className={`md:${profileDropdown?"visible":"hidden"} md:absolute md:bg-white md:text-gray-700 rounded text-xl md:text-base px-2 py-2 md:w-[120px] md:flex-col space-y-4 mt-2 -left-20 `} onMouseOver={()=>{clearTimeout(timeout);setProfiledropdown(true)}} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),500)}}>
                         <li onClick={()=>handleLinks()}><Link to={"/profile"}>Dashboard</Link></li>
                         <li onClick={()=>handleLinks()}><Link to={"/orders"}>Orders</Link></li>
                         <li onClick={()=>handleLinks()}><Link to={"/wishlist"}>Wislist</Link></li>

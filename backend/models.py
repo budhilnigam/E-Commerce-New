@@ -83,13 +83,14 @@ class Products(db.Model):
     product_image = db.Column(db.String)
     seller_id = db.Column(db.ForeignKey('Sellers.seller_id'), nullable=False)
     product_name = db.Column(db.Text, nullable=False)
-    category_id = db.Column(db.Integer)
+    category_id = db.Column(db.ForeignKey('Categories.category_id'),nullable=False)
     brand = db.Column(db.Text)
+    mrp = db.Column(db.Integer,nullable=False)
     price = db.Column(db.Integer, nullable=False)
     specs = db.Column(db.Text, nullable=False, default=' ')
+    rating = db.Column(db.Numeric(1,1),default=0.0)
 
-
-    def __init__(self,seller_id,product_name,category_id,brand,price,specs,product_image=None):
+    def __init__(self,seller_id,product_name,category_id,brand,price,specs,product_image=None,mrp=None):
         self.seller_id=seller_id
         self.product_name=product_name
         self.category_id=category_id
@@ -97,6 +98,7 @@ class Products(db.Model):
         self.price=price
         self.specs=specs
         self.product_image=product_image
+        self.mrp=mrp
 
 class Sellers(db.Model):
 

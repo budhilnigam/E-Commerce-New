@@ -62,9 +62,9 @@ def user_logout():
     logout_user()
     return {"message":"Logout successful"}
 
-@app.route("/image/<str:path>")
+@app.route("/image/<string:path>")
 def image_file():
-    return send_file
+    return send_file()
 
 if __name__=="__main__":
     app.run()
