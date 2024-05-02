@@ -1,63 +1,91 @@
 import React,{ useState } from "react";
+import {
+    Button,
+    Dialog,
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Typography,
+    Input,
+    Checkbox,
+  } from "@material-tailwind/react";
+import { Navigate } from "react-router";
 
 const LoginUser=()=>{
-    const [email_id,setEmailId]=useState(' ');
-    const [password,setPassword]=useState('a');
-    async function login_request(email,p){
-        const details = { "email_id":email,"password":p};
+    const [email_id,setEmailId]=useState('');
+    const [password,setPassword]=useState('');
+    const [authError,setAuthError]=useState('');
+    const [userAuth,setUserAuth]=useState(false);
+    async function login_request(email,password){
+        const details = { "email_id":email,"password":password};
         const response = await fetch("/api/user/login", {
             method: "POST",
             headers: {
             'Content-Type' : 'application/json'
             },
             body: JSON.stringify(details)
+            }).then((res)=>res.json(),(rej)=>rej.json()).then((data)=>{
+                console.log(data.message);
+                if(data.message=="Successful Login"){
+                    setUserAuth(true);
+                } else {
+                    setAuthError(data.message);
+                }
             })
-        if (response.ok){
-            console.log("it worked");
-            this.props.history.push('/home')
-        } else {
-            console.log("Some error");
-        }
+    }
+    if(userAuth){
+        return <Navigate to="/" />
     }
     return (
         <>
-            <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">   
-                </a>
-                <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                            Log in
-                        </h1>
-                        <form className="space-y-4 md:space-y-6" onSubmit={(e)=>{e.preventDefault();login_request(email_id,password);}} method="POST">
-                            <div>
-                                <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                                <input type="email" name="email_id" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="" onChange={e=>setEmailId(e.target.value)}/>
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                                <input type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" onChange={e=>setPassword(e.target.value)}/>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-start">
-                                    <div className="flex items-center h-5">
-                                        <input id="remember" aria-describedby="remember" type="checkbox" className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required=""/>
-                                    </div>
-                                    <div className="ml-3 text-sm">
-                                        <label htmlFor="remember" className="text-gray-500 dark:text-gray-300">Remember me</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
-                            <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                                Don't have an account yet? <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-                            </p>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            </section>
+            <Card className="mx-auto w-full max-w-[24rem]">
+            <form onSubmit={(e)=>{e.preventDefault();login_request(email_id,password)}}>
+            <CardBody className="flex flex-col gap-4">
+              <Typography variant="h4" color="blue-gray">
+                Sign In
+              </Typography>
+              <Typography
+                className="mb-3 font-normal"
+                variant="paragraph"
+                color="gray"
+              >
+                Enter your email and password to Sign In.
+              </Typography>
+              {authError!=""?<Typography variant="small" className="flex justify-center text-red-600">
+              {authError}
+              </Typography>:""}
+              <Typography className="-mb-2" variant="h6">
+                Your Email
+              </Typography>
+              <Input label="Email" size="lg" type="email" required onChange={e=>setEmailId(e.target.value)}/>
+              <Typography className="-mb-2" variant="h6">
+                Your Password
+              </Typography>
+              <Input label="Password" size="lg" type="password" required onChange={e=>setPassword(e.target.value)}/>
+              <div className="-ml-2.5 -mt-3">
+                <Checkbox label="Remember Me" />
+              </div>
+            </CardBody>
+            <CardFooter className="pt-0">
+              <Button variant="gradient" type="submit" fullWidth>
+                Sign In
+              </Button>
+              <Typography variant="small" className="mt-4 flex justify-center">
+                Don&apos;t have an account?
+                <Typography
+                  as="a"
+                  variant="small"
+                  color="blue-gray"
+                  className="ml-1 font-bold"
+                  href="/signup"
+                >
+                  Sign up
+                </Typography>
+              </Typography>
+            </CardFooter>
+            </form>
+          </Card>
         </>
     )
 }

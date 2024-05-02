@@ -53,9 +53,9 @@ def user_login():
 @app.route("/user")
 def about_user():
     if current_user.is_authenticated:
-        return {"status":"authenticated","user_id":current_user.user_id}
+        return {"status":"authenticated","user_id":current_user.user_id},200
     else:
-        return {"status":"notauthenticated"}
+        return {"status":"notauthenticated"},302
 
 @app.route("/user/logout")
 def user_logout():
