@@ -28,14 +28,14 @@ def user_signup():
     password=response['password']
     print(response)
     if Users.query.filter_by(email_id=email_id).first():
-        return {"message":"Another account is already using this account!"},302
+        return {"message":"Another account is already using this Email ID!"},302
     else:
         encryptpassword=bcrypt.generate_password_hash(password=password)
         user=Users(username=username,email_id=email_id,password=encryptpassword)
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        return {"message":"Successful Sigup"},200
+        return {"message":"Successful Signup"},200
 
 @app.route('/user/login',methods=['GET','POST'])
 def user_login():
@@ -48,7 +48,7 @@ def user_login():
         user=Users.query.filter_by(email_id=email_id).first()
         login_user(user)
         return {"message":"Successful Login"},200
-    return {"message":"Incorrect Credentials"},202
+    return {"message":"Invalid Credentials"},401
 
 @app.route("/user")
 def about_user():
