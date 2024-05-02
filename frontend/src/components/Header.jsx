@@ -22,15 +22,9 @@ import {
     ShoppingCartIcon
   } from "@heroicons/react/24/solid";
 
-export const Navbar = () => {
-    const [userAuth,setUserAuth]=useState(false);
-    useEffect(()=>{fetch('/api/user').then((res)=>res.json()).then(data=>{
-        if (data.status=='authenticated'){
-            setUserAuth(data.user_id);
-        } else {
-            setUserAuth(false);
-        }
-    })})
+export const Navbar = (props) => {
+    const userAuth=props.userAuth;
+    const setUserAuth=props.setUserAuth;
     const [openNav,setOpenNav]=useState(false);
     const [activeLink,setActiveLink]=useState(window.location.pathname);
     function handleLinks(){

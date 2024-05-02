@@ -16,6 +16,19 @@ import {
  
 import { FaHeart,FaBoxOpen } from "react-icons/fa";
 const Dashboard=()=>{
+    async function authorization(){
+        await fetch('/api/user').then(res=>res.json()).then(data=>{
+            if(data.status==='notauthenticated'){
+                return false;
+            } else if (data.status==='authenticated'){
+                return data.user_id;
+            }
+        }
+    )}
+    const auth=authorization();
+    if (auth===false){
+        return <Navigate to="/login" />
+    }
     const [activeLink,setActiveLink]=useState(window.location.pathname);
     function handleLinks(){
         setActiveLink(window.location.pathname);
@@ -24,7 +37,7 @@ const Dashboard=()=>{
     <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 p-4">
         <Typography variant="h5" color="blue-gray">
-          Sidebar
+          Dashboard
         </Typography>
       </div>
       <List>

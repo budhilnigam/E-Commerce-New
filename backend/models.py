@@ -67,14 +67,15 @@ class Products(db.Model):
     product_image = db.Column(db.String)
     seller_id = db.Column(db.ForeignKey(Sellers.seller_id), nullable=False)
     product_name = db.Column(db.Text, nullable=False)
-    category_id = db.Column(db.ForeignKey(Categories.category_id),nullable=False)
+    category_id = db.Column(db.ForeignKey(Categories.category_id))
     brand = db.Column(db.Text)
     mrp = db.Column(db.Integer,nullable=False)
     price = db.Column(db.Integer, nullable=False)
     specs = db.Column(db.Text, nullable=False, default='' )
+    stock = db.Column(db.Integer, nullable=False, default=0 )
     rating = db.Column(db.Numeric(1,1),default=0.0)
     
-    def __init__(self,seller_id,product_name,category_id,brand,price,specs,product_image=None,mrp=None):
+    def __init__(self,seller_id,product_name,category_id,brand,price,specs,product_image=None,mrp=None,stock=1):
         self.seller_id=seller_id
         self.product_name=product_name
         self.category_id=category_id
@@ -83,7 +84,20 @@ class Products(db.Model):
         self.specs=specs
         self.product_image=product_image
         self.mrp=mrp
+        self.stock=stock
 
+
+class Carts(db.Model):
+
+    cart_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    user_id = db.Column(db.ForeignKey(Users.user_id), nullable=False)
+    product_id = db.Column(db.ForeignKey(Products.product_id), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    def __init__(self,user_id,product_id,quantity):
+        self.user_id=user_id
+        self.product_id=product_id
+        self.quantity=quantity
 
 class Feedbacks(db.Model):
     f_id=db.Column(db.Integer,primary_key=True,autoincrement=True)

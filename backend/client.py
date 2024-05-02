@@ -1,6 +1,6 @@
-from __main__ import app
+from __main__ import app,current_user
 from models import *
-from flask import jsonify,json
+from flask import jsonify,json,request
 
 def queryconverter(query):
     result=[]
@@ -18,12 +18,14 @@ def singlequeryconverter(query):
                 result[j]=query.__dict__[j]
     return result
 
+['__abstractmethods__', '__class__', '__class_getitem__', '__contains__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattr__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__module__', '__ne__', '__new__', '__orig_bases__', '__parameters__', '__pyx_vtable__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__setattr__', '__setstate__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '_abc_impl', '_asdict', '_data', '_fields', '_filter_on_values', '_get_by_key_impl_mapping', '_is_protocol', '_key_to_index', '_mapping', '_op', '_parent', '_special_name_accessor', '_t', '_to_tuple_instance', '_tuple', '_values_impl', 'count', 'index', 't', 'tuple']
 def dbqueryconverter(query):
     result=[]
     for r in query:
         result.append({})
-        for i in range(len(query.column_descriptions)):
-            result[len(result)-1][query.column_descriptions[i]['name']]=getattr(r,query.column_descriptions[i]['name'])
+        for j in r._mapping:
+            result[len(result)-1][j]=r._mapping[j]
+    print(result)
     return result
 
 
@@ -33,7 +35,7 @@ def list_of_products(category):
         products=queryconverter(Products.query.all())
     elif category=="laptops":
         #print(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop').all())
-        products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop'))
+        products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop').all())
     elif category=="mobiles":
         products=queryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).join(Categories).filter(Categories.category_name=='phone').all())
     return {"products":products}
@@ -44,3 +46,42 @@ def product_details(product_id):
         return {"details":singlequeryconverter(Products.query.filter_by(product_id=product_id).first())},200
     else:
         return {"message":"Not found"},404
+    
+@app.route("/dashboard/aboutuser")
+def about_user():
+    #print(singlequeryconverter(Users.query.filter_by(user_id=current_user.user_id).first()))
+    return dbqueryconverter(db.session.query(Users.user_name,Users.email_id,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Addresses).filter(Users.user_id==current_user.user_id).all())[0]
+
+@app.route("/cart")
+def cart():
+    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Carts.quantity,Sellers.seller_name).join(Carts).join(Sellers).filter(Carts.user_id==current_user.user_id).all())}
+
+@app.route("/cart/add",methods=['GET','POST'])
+def add_to_cart():
+    response=request.get_json()
+    product_id=response['product_id']
+    if Carts.query.filter_by(user_id=current_user.user_id,product_id=product_id).first():
+        cart=Carts.query.filter_by(user_id=current_user.user_id,product_id=product_id).first()
+        cart.quantity+=1
+        db.session.commit()
+        return {"message":"Item incremented"}
+    else:
+        cart=Carts(current_user.user_id,product_id=product_id,quantity=1)
+        db.session.add(cart)
+        db.session.commit()
+        return {"message":"Item added"}
+
+@app.route("/cart/less/<string:amt>")
+def dec_to_cart(amt):
+    response=request.get_json()
+    product_id=response['product_id']
+    if Carts.query.filter_by(user_id=current_user.user_id,product_id=product_id).first():
+        cart=Carts.query.filter_by(user_id=current_user.user_id,product_id=product_id).first()
+        if cart.quantity==1 or amt=="all":
+            db.session.delete(cart)
+            db.session.commit()
+            return {"message":"Item decremented"}
+        else:
+            cart.quantity-=1
+            db.session.commit()
+            return {"message":"Item removed"}

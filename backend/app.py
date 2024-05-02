@@ -51,7 +51,7 @@ def user_login():
     return {"message":"Invalid Credentials"},401
 
 @app.route("/user")
-def about_user():
+def authentication_result():
     if current_user.is_authenticated:
         return {"status":"authenticated","user_id":current_user.user_id},200
     else:

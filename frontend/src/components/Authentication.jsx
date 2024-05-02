@@ -34,7 +34,7 @@ const AuthWithForm=(props)=>{
                     setAuthError(data.message);
                 }
             })
-    } 
+    }
     async function signup_request(username,email,password,e=null){
         const details = {"username":username, "email_id":email,"password":password};
         const response = await fetch("/api/user/signup", {
