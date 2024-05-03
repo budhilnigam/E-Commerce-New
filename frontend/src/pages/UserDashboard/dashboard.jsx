@@ -34,15 +34,15 @@ const Dashboard=()=>{
         setActiveLink(window.location.pathname);
     }
     return (
-    <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <Card className="h-[calc(100vh-2rem)] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 p-4">
         <Typography variant="h5" color="blue-gray">
           Dashboard
         </Typography>
       </div>
-      <List>
+      <List className="w-[20px]">
         <a href="/profile">
-        <ListItem onClick={()=>{handleLinks();}}>
+        <ListItem className="w-full" onClick={()=>{handleLinks();}}>
         <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
         </ListItemPrefix>

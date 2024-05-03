@@ -15,6 +15,9 @@ bcrypt=Bcrypt(app)
 login_manager_user=LoginManager()
 login_manager_user.init_app(app)
 login_manager_user.login_view='/user/login'
+
+# load users, roles for a session
+
 @login_manager_user.user_loader
 def load_user(userid):
     return db.session.get(Users,userid)
@@ -67,4 +70,4 @@ def image_file():
     return send_file()
 
 if __name__=="__main__":
-    app.run()
+    app.run(debug=True)

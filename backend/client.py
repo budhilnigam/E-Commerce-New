@@ -1,6 +1,7 @@
 from __main__ import app,current_user
 from models import *
-from flask import jsonify,json,request
+from flask import jsonify,json,request,send_file
+from sqlalchemy import alias
 
 def queryconverter(query):
     result=[]
@@ -54,7 +55,7 @@ def about_user():
 
 @app.route("/cart")
 def cart():
-    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Carts.quantity,Sellers.seller_name).join(Carts).join(Sellers).filter(Carts.user_id==current_user.user_id).all())}
+    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Sellers.seller_name,Carts.quantity).join(Carts,Products.product_id==Carts.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Carts.user_id==current_user.user_id).all())}
 
 @app.route("/cart/add",methods=['GET','POST'])
 def add_to_cart():
@@ -71,7 +72,7 @@ def add_to_cart():
         db.session.commit()
         return {"message":"Item added"}
 
-@app.route("/cart/less/<string:amt>")
+@app.route("/cart/less/<string:amt>",methods=['GET','DELETE'])
 def dec_to_cart(amt):
     response=request.get_json()
     product_id=response['product_id']
@@ -85,3 +86,7 @@ def dec_to_cart(amt):
             cart.quantity-=1
             db.session.commit()
             return {"message":"Item removed"}
+        
+@app.route("/image/<string:name>")
+def send_image(name):
+    return send_file("./uploads/asus_vivobook.jpg")

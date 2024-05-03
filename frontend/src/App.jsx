@@ -12,8 +12,10 @@ import Orders from './pages/UserDashboard/orders'
 import Cart from './pages/UserDashboard/cart'
 import Wishlist from './pages/UserDashboard/wishlist'
 import { useState,useEffect } from 'react'
+import CheckoutPage from './pages/UserDashboard/checkout'
 function App() {
-  const [userAuth, setUserAuth] = useState({})
+  const [userAuth, setUserAuth] = useState(false)
+  const [sellerAuth,setSellerAuth]=useState(false)
   useEffect(()=>{fetch('/api/user').then((res)=>res.json()).then(data=>{
     if (data.status=='authenticated'){
         setUserAuth(data.user_id);
@@ -37,6 +39,7 @@ function App() {
           <Route path='/orders' element={<Orders/>}></Route>
           <Route path='/cart' element={<Cart/>}></Route>
           <Route path='/wishlist' element={<Wishlist/>}></Route>
+          <Route path='/checkout' element={<CheckoutPage/>}></Route>
         </Routes>
       </BrowserRouter>
     </>

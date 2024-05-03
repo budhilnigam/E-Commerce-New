@@ -2,7 +2,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date,timedelta
 from flask_login import UserMixin
-
 db = SQLAlchemy()
 
 class Addresses(db.Model):
@@ -22,29 +21,13 @@ class Addresses(db.Model):
         self.pincode=pincode
         self.type=type
 
-class Sellers(db.Model):
+class Sellers(db.Model,UserMixin):
 
     seller_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    email_id = db.Column(db.Text, nullable=False)
-    seller_name = db.Column(db.Text, nullable=False)
-    addr_id = db.Column(db.Integer)
-
-    def __init__(self,email_id,seller_name,addr_id=None):
-        self.email_id=email_id
-        self.seller_name=seller_name
-        self.addr_id=addr_id
-    
-    def get_id(self):
-        return self.seller_id
-
-class Users(db.Model,UserMixin):
-
-    user_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    user_name = db.Column(db.Text,nullable=False)
+    seller_name = db.Column(db.Text,nullable=False)
     email_id = db.Column(db.Text, nullable=False,unique=True)
     password = db.Column(db.Text, nullable=False)
     addr_id = db.Column(db.ForeignKey(Addresses.addr_id),default=None)
-
 
     def __init__(self,username,email_id,password,addr_id=None):
         self.email_id=email_id
@@ -52,20 +35,36 @@ class Users(db.Model,UserMixin):
         self.password=password
         self.addr_id=addr_id
 
+class Users(db.Model,UserMixin):
+
+    user_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    user_name = db.Column(db.Text,nullable=False)
+    email_id = db.Column(db.Text, nullable=False)
+    password = db.Column(db.Text, nullable=False)
+    addr_id = db.Column(db.ForeignKey(Addresses.addr_id),default=None)
+    role=db.Column(db.String(80),nullable=False,default='customer')
+
+    def __init__(self,username,email_id,password,role='customer',addr_id=None):
+        self.email_id=email_id
+        self.user_name=username
+        self.password=password
+        self.addr_id=addr_id
+        self.role=role
+
     def get_id(self):
         return self.user_id
 
 class Categories(db.Model):
-
+    __searchable__=['category_name']
     category_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     category_name = db.Column(db.Text, nullable=False)
 
 
 class Products(db.Model):
-
+    __searchable__=['product_name','specs','brand']
     product_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     product_image = db.Column(db.String)
-    seller_id = db.Column(db.ForeignKey(Sellers.seller_id), nullable=False)
+    seller_id = db.Column(db.ForeignKey(Users.user_id), nullable=False)
     product_name = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.ForeignKey(Categories.category_id))
     brand = db.Column(db.Text)
@@ -85,6 +84,7 @@ class Products(db.Model):
         self.product_image=product_image
         self.mrp=mrp
         self.stock=stock
+        self.rating=0.0
 
 
 class Carts(db.Model):

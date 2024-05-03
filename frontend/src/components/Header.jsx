@@ -30,6 +30,15 @@ export const Navbar = (props) => {
     function handleLinks(){
         setActiveLink(window.location.pathname);
     }
+    const [cartTotal,setCartTotal]=useState(0);
+    function cart_count(total,obj){
+        return total+obj.quantity
+    }
+    async function get_cart(){
+        await fetch("/api/cart").then(res=>res.json()).then(data=>setCartTotal(data.cart.reduce(cart_count,0)))
+        return null;
+    }
+    useEffect(()=>{get_cart()})
     const [profileDropdown,setProfiledropdown]=useState(false);
     const navItems = [
         {
@@ -48,7 +57,7 @@ export const Navbar = (props) => {
     let timeout;
     return (
         <header className=" sticky top-0 z-10">
-        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-14 mb-10">
+        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-28 mb-10">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl text-2xl my-auto h-full ">
                 <Link to="/" className="flex flex-row items-center">
                     <MdElectricBolt onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}} className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
@@ -75,9 +84,9 @@ export const Navbar = (props) => {
                         })}
                     {userAuth===false?<AuthWithForm userAuth={userAuth} setUserAuth={setUserAuth}/>:
                     <>
-                    <span className="bg-black w-full h-[1px] md:hidden"></span>
+                    <span className="bg-black w-3/4 h-[1px] md:hidden"></span>
                     <div onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),300)}} className="relative w-full md:w-10 md:h-14 border justify-center align-middle items-center flex">    
-                    <FaUserCircle className="hidden md:block mx-auto text-gray-900 border border-red-300 w-28 h-8 "/>
+                    <FaUserCircle className="hidden md:block mx-auto text-gray-700 w-28 h-8 "/>
                     <List className={`md:${profileDropdown?"visible":"hidden"} md:top-12 md:right-0 md:absolute md:bg-gray-50 md:shadow-lg px-20 md:px-0 `}>
                         <a href="/profile">
                         <ListItem onClick={()=>{handleLinks();}}>
@@ -130,7 +139,7 @@ export const Navbar = (props) => {
                     <div  onClick={()=>handleLinks()} className="relative md:flex hidden">
                     <Link to={"/cart"}>
                     <ShoppingCartIcon className="h-8 w-10 text-gray-800"/>
-                    <section className=" absolute left-4 bottom-4 bg-red-500 text-gray-100 rounded-xl text-[12px] w-[18px] h-[18px] flex justify-center items-center ">10</section>
+                    <section className=" absolute left-4 bottom-4 bg-red-500 text-gray-100 rounded-xl text-[12px] w-[18px] h-[18px] flex justify-center items-center ">{cartTotal}</section>
                     </Link>
                     </div>
                     </>}
