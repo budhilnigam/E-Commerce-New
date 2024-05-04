@@ -119,16 +119,20 @@ class Orders(db.Model):
     product_id = db.Column(db.ForeignKey(Products.product_id), nullable=False)
     user_id = db.Column(db.ForeignKey(Users.user_id), nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False,default=1)
     date_order = db.Column(db.Text, nullable=False)
     date_delivery = db.Column(db.Text, nullable=False)
     addr_id = db.Column(db.Integer, nullable=False)
+    status =db.Column(db.String(20),nullable=False,default='pending')
 
-    def __init__(self,product_id,user_id,price,addr_id):
+    def __init__(self,product_id,user_id,price,quantity,addr_id):
         self.product_id=product_id
         self.user_id=user_id
         self.price=price
+        self.quantity=quantity
         self.addr_id=addr_id
         self.date_order=date.today()
+        self.status='pending'
         self.date_delivery=date.today()+timedelta(days=5)
 
 class ProductHistory(db.Model):

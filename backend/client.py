@@ -1,7 +1,6 @@
 from __main__ import app,current_user
 from models import *
 from flask import jsonify,json,request,send_file
-from sqlalchemy import alias
 
 def queryconverter(query):
     result=[]
@@ -51,7 +50,22 @@ def product_details(product_id):
 @app.route("/dashboard/aboutuser")
 def about_user():
     #print(singlequeryconverter(Users.query.filter_by(user_id=current_user.user_id).first()))
-    return dbqueryconverter(db.session.query(Users.user_name,Users.email_id,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Addresses).filter(Users.user_id==current_user.user_id).all())[0]
+    if Users.query.filter_by(user_id=current_user.user_id).first().addr_id!=None:
+        return dbqueryconverter(db.session.query(Users.user_name,Users.email_id,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Addresses).filter(Users.user_id==current_user.user_id).all())[0]
+    else:
+        return dbqueryconverter(db.session.query(Users.user_name,Users.email_id).filter(Users.user_id==current_user.user_id).all())[0]
+
+@app.route("/addaddress",methods=['GET','POST'])
+def add_address():
+    response=request.get_json()
+    primary=response['primary']
+    addr=Addresses(line1=response['line1'],line2=response['line2'],city=response['city'],state=response['state'],pincode=response['pincode'])
+    db.session.add(addr)
+    db.session.commit()
+    if primary=='true':
+        current_user.addr_id=addr.addr_id
+        db.session.commit()
+    return {"addr_id":addr.addr_id}
 
 @app.route("/cart")
 def cart():
@@ -86,7 +100,33 @@ def dec_to_cart(amt):
             cart.quantity-=1
             db.session.commit()
             return {"message":"Item removed"}
-        
+
+
+@app.route("/orders")
+def user_orders():
+    return {"orders":dbqueryconverter(db.session.query(Orders.order_id,Orders.user_id,Orders.product_id,Orders.quantity,Orders.status,Orders.date_order,Orders.date_delivery,Products.product_name,Products.product_image).join(Users,Users.user_id==Orders.user_id).join(Products,Products.product_id==Orders.product_id).filter(Users.user_id==current_user.user_id).all())}
+
+@app.route("/order",methods=['GET','POST'])
+def place_order():
+    response=request.get_json()
+    print(response)
+    product_id=response['product_id']
+    quantity=response['quantity']
+    price=response['price']
+    address_changed=response['address_changed']
+    addr_id=current_user.addr_id
+    if address_changed=='true':
+        addr_id=add_address({'line1':response['line1'],'line2':response['line2'],'city':response['city'],'state':response['state'],'pincode':response['pincode'],'primary':response['primary']})['addr_id']
+    if Products.query.filter_by(product_id=product_id).first().stock<quantity:
+        return {"message":"Not enough stock"},400
+    order=Orders(product_id=product_id,user_id=current_user.user_id,quantity=quantity,price=price,addr_id=addr_id)
+    db.session.add(order)
+    db.session.commit()
+    product=Products.query.filter_by(product_id=product_id).first()
+    product.stock-=quantity
+    db.session.commit()
+    return {"message":"Order placed"},200
+
 @app.route("/image/<string:name>")
 def send_image(name):
     return send_file("./uploads/asus_vivobook.jpg")

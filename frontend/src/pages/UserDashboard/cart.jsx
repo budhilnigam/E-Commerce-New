@@ -2,6 +2,7 @@ import Dashboard from "./dashboard";
 import { useState,useEffect } from "react";
 import {IoMdClose,IoMdRemove,IoMdAdd} from "react-icons/io"
 import { Link } from "react-router-dom";
+import AddressForm from "../../components/AddressForm";
 const Cart=()=>{
 const [cart,setCart]=useState([])
 async function get_cart(){
@@ -34,10 +35,54 @@ async function cart_less(p_id,q){
             console.log(data.message);
         })
 }
+async function place_order(p_id,price,qty){
+    let orderMessage="";
+    const details = {"product_id":p_id,"price":price,"quantity":qty};
+    const response = await fetch("/api/order", {
+        method: "POST",
+        headers: {
+        'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify(details)
+        }).then((res)=>res.json(),(rej)=>rej.json()).then((data)=>{
+           orderMessage=data.message;
+        })
+    return orderMessage;
+}
+const [userDetails,setUserDetails]=useState({})
+async function get_address(){
+    await fetch("/api/dashboard/aboutuser").then(res=>res.json()).then(data=>{
+        console.log(data)
+        if(data.line1!=null){
+            setUserDetails(data);
+        }
+    })
+}
+useEffect(()=>{get_address()},[]);
 useEffect(()=>{get_cart()},[]);
 function getTotalCost(total,obj){
     return total+obj.price*obj.quantity;
 }
+function product_order(){
+    for(const i in cart){
+        console.log(i)
+        message=place_order(cart[i].product_id,cart[i].quantity*cart[i].price,cart[i].quantity);
+    }
+}
+const [line1,setLine1]=useState(userDetails.line1);
+const [line2,setLine2]=useState(userDetails.line2);
+const [state,setState]=useState(userDetails.state);
+const [city,setCity]=useState(userDetails.city);
+const [pincode,setPincode]=useState(userDetails.line1);
+const [primary,setPrimary]=useState(false);
+if (props.type=='Change address'){
+    useEffect(()=>{fetch("/api/dashboard/aboutuser").then(res=>res.json()).then(data=>{
+        setLine1(data.line1);
+        setLine2(data.line2);
+        setState(data.state);
+        setCity(data.city);
+        setPincode(data.pincode);
+})},[]);}
 let total_cost=cart.reduce(getTotalCost,0);
 return (
 <div className="flex">
@@ -101,6 +146,16 @@ return (
                 </div>
     )})}
 </div>
+<div className="bg-white rounded-lg shadow-md p-6 mb-4">
+{userDetails.line1!=null?<div>
+Deliver at {userDetails.line1}<br/>
+                    {userDetails.line2!=null?userDetails.line2+"<br>":""}
+                    {userDetails.city}<br/>
+                    {userDetails.state}<br/>
+                    Pincode: {userDetails.pincode}
+                    {<AddressForm type="Change address"/>}</div>
+:<AddressForm type="Add address"/>}
+</div>
 </div>
 <div className="md:w-1/4">
 <div className="bg-white rounded-lg shadow-md p-6">
@@ -122,9 +177,9 @@ return (
         <span className="font-semibold">Total</span>
         <span className="font-semibold">₹ {total_cost*1.18}</span>
     </div>
-    <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
-</div>
-</div>
+        <button onClick={()=>{product_order();}} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
+    </div>
+    </div>
 </div>
 </div>
 </div>

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {MdElectricBolt,MdOutlineClose} from "react-icons/md";
 import {FaBars,FaUserCircle,FaPowerOff, FaBoxOpen,FaHeart } from "react-icons/fa"
+import {RiArrowDropDownLine} from "react-icons/ri"
 import AuthWithForm from "./Authentication";
 import {
     Card,
@@ -85,9 +86,12 @@ export const Navbar = (props) => {
                     {userAuth===false?<AuthWithForm userAuth={userAuth} setUserAuth={setUserAuth}/>:
                     <>
                     <span className="bg-black w-3/4 h-[1px] md:hidden"></span>
-                    <div onMouseOver={()=>setProfiledropdown(true)} onMouseLeave={()=>{timeout=setTimeout(()=>setProfiledropdown(false),300)}} className="relative w-full md:w-10 md:h-14 border justify-center align-middle items-center flex">    
+                    <div className="relative md:w-16 md:h-10  justify-center align-middle items-center flex">    
+                    <div onClick={()=>{setProfiledropdown(!profileDropdown)}} className={`flex w-16 rounded-3xl ${profileDropdown?"border border-black":""} p-1 justify-center items-center h-max hover:cursor-pointer`}>
                     <FaUserCircle className="hidden md:block mx-auto text-gray-700 w-28 h-8 "/>
-                    <List className={`md:${profileDropdown?"visible":"hidden"} md:top-12 md:right-0 md:absolute md:bg-gray-50 md:shadow-lg px-20 md:px-0 `}>
+                    <RiArrowDropDownLine className="w-28"/>
+                    </div>
+                    <List className={`md:${profileDropdown?"visible":"hidden"} md:top-20 md:-right-4 md:absolute md:bg-gray-50 md:shadow-xl px-20 md:px-2 md:rounded border `}>
                         <a href="/profile">
                         <ListItem onClick={()=>{handleLinks();}}>
                         <ListItemPrefix>
@@ -136,7 +140,7 @@ export const Navbar = (props) => {
                         </a>
                     </List>
                     </div>
-                    <div  onClick={()=>handleLinks()} className="relative md:flex hidden">
+                    <div onClick={()=>handleLinks()} className="relative md:flex hidden md:-left-2">
                     <Link to={"/cart"}>
                     <ShoppingCartIcon className="h-8 w-10 text-gray-800"/>
                     <section className=" absolute left-4 bottom-4 bg-red-500 text-gray-100 rounded-xl text-[12px] w-[18px] h-[18px] flex justify-center items-center ">{cartTotal}</section>
