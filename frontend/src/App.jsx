@@ -16,28 +16,29 @@ import CheckoutPage from './pages/UserDashboard/checkout'
 function App() {
   const [userAuth, setUserAuth] = useState(false)
   const [sellerAuth,setSellerAuth]=useState(false)
+  const [cart,setCart]=useState(false)
   useEffect(()=>{fetch('/api/user').then((res)=>res.json()).then(data=>{
     if (data.status=='authenticated'){
         setUserAuth(data.user_id);
     } else {
         setUserAuth(false);
     }
-})}
-,[userAuth])
+})},[userAuth]);
+  useEffect(()=>{},[cart]);
   return (
     <>
       <BrowserRouter>
-      <Navbar userAuth={userAuth} setUserAuth={setUserAuth}/>
+      <Navbar userAuth={userAuth} setUserAuth={setUserAuth} cart={cart} setCart={setCart}/>
         <Routes>
-          <Route path='/' element={<Home/>}></Route>
-          <Route path='/laptops' element={<Laptops/>}></Route>
-          <Route path='/mobiles' element={<Mobiles/>}></Route>
-          <Route path='/product/:id' element={<ProductDetails/>}></Route>
+          <Route path='/' element={<Home />}></Route>
+          <Route path='/laptops' element={<Laptops cart={cart} setCart={setCart}/>}></Route>
+          <Route path='/mobiles' element={<Mobiles cart={cart} setCart={setCart}/>}></Route>
+          <Route path='/product/:id' element={<ProductDetails cart={cart} setCart={setCart}/>}></Route>
           <Route path='/login' element={<LoginUser/>}></Route>
           <Route path='/signup' element={<SignupUser/>}></Route>
           <Route path='/profile' element={<UserProfile/>}></Route>
           <Route path='/orders' element={<Orders/>}></Route>
-          <Route path='/cart' element={<Cart/>}></Route>
+          <Route path='/cart' element={<Cart cart={cart} setCart={setCart}/>}></Route>
           <Route path='/wishlist' element={<Wishlist/>}></Route>
           <Route path='/checkout' element={<CheckoutPage/>}></Route>
         </Routes>

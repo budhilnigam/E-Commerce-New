@@ -28,6 +28,8 @@ export const Navbar = (props) => {
     const setUserAuth=props.setUserAuth;
     const [openNav,setOpenNav]=useState(false);
     const [activeLink,setActiveLink]=useState(window.location.pathname);
+    const cart=props.cart;
+    const setCart=props.setCart;
     function handleLinks(){
         setActiveLink(window.location.pathname);
     }
@@ -39,7 +41,7 @@ export const Navbar = (props) => {
         await fetch("/api/cart").then(res=>res.json()).then(data=>setCartTotal(data.cart.reduce(cart_count,0)))
         return null;
     }
-    useEffect(()=>{get_cart()})
+    useEffect(()=>{get_cart()},[cart]);
     const [profileDropdown,setProfiledropdown]=useState(false);
     const navItems = [
         {
@@ -66,13 +68,13 @@ export const Navbar = (props) => {
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
                     <button className="p-2 ml-1 text-xl rounded-md md:hidden
-                     focus:outline-none focus:ring-2 focus:ring-gray-200 ">
+                     focus:outline-none focus:ring-2 focus:ring-gray-200 z-10 ">
                         {!openNav ? <FaBars  onClick={()=>setOpenNav(true)} /> : <MdOutlineClose onClick={()=>{setOpenNav(false)}}/>}
                     </button>
                 </div>
-                <div className={`${openNav ? "right-0" : "-right-[100%]"} top-14 border border-l-gray-400 md:border-none bg-gray-100 md:bg-none
+                <div className={`${openNav ? "right-0" : "-right-[100%]"} top-0 border border-l-gray-400 md:border-none bg-gray-100 md:bg-none
                  transition-all duration-300 md:h-auto h-full shadow-xl md:shadow-none fixed md:static md:justify-between items-center w-[50%]
-                  flex-col md:items-center md:flex-row flex md:w-auto md:order-1 md:space-x-8 space-y-6 md:space-y-0`}>
+                  flex-col md:items-center md:flex-row flex md:w-auto md:order-1 md:space-x-8 space-y-6 md:space-y-0 pt-8 md:pt-0`}>
                     <ul className="flex flex-col items-center space-y-5 md:space-y-0 font-medium md:flex-row md:space-x-8 mt-20 md:mt-0">
                         {navItems.map((item, index) => {
                             return (
@@ -85,13 +87,13 @@ export const Navbar = (props) => {
                         })}
                     {userAuth===false?<AuthWithForm userAuth={userAuth} setUserAuth={setUserAuth}/>:
                     <>
-                    <span className="bg-black w-3/4 h-[1px] md:hidden"></span>
+                    <span className="bg-black w-1/2 h-[1px] md:hidden"></span>
                     <div className="relative md:w-16 md:h-10  justify-center align-middle items-center flex">    
                     <div onClick={()=>{setProfiledropdown(!profileDropdown)}} className={`flex w-16 rounded-3xl ${profileDropdown?"border border-black":""} p-1 justify-center items-center h-max hover:cursor-pointer`}>
                     <FaUserCircle className="hidden md:block mx-auto text-gray-700 w-28 h-8 "/>
-                    <RiArrowDropDownLine className="w-28"/>
+                    <RiArrowDropDownLine className="hidden md:block w-28"/>
                     </div>
-                    <List className={`md:${profileDropdown?"visible":"hidden"} md:top-20 md:-right-4 md:absolute md:bg-gray-50 md:shadow-xl px-20 md:px-2 md:rounded border `}>
+                    <List className={`md:${profileDropdown?"visible":"hidden"} md:top-20 md:-right-4 md:absolute md:bg-gray-50 md:shadow-xl md:text-baseline md:text-blue-gray-700 text-[20px] md:px-2 md:rounded md:border `}>
                         <a href="/profile">
                         <ListItem onClick={()=>{handleLinks();}}>
                         <ListItemPrefix>

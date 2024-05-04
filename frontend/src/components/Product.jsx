@@ -4,10 +4,11 @@ import {FaHeart} from "react-icons/fa"
 import { BsPlus, BsEyeFill } from "react-icons/bs";
 import LaptopImg from "../assets/logom.webp"
 import { Button, Tooltip,Typography } from "@material-tailwind/react";
-const Product = ({ product }) => {
-
+const Product = (props) => {
+  const cart=props.cart;
+  const setCart=props.setCart;
   // destructure product
-  const { product_id, category_name, product_name, price } = product;
+  const { product_id,product_image, category_name, product_name, price} = props.product;
   async function cart_add(p_id){
     const details = { "product_id":p_id};
     const response = await fetch("/api/cart/add", {
@@ -28,7 +29,7 @@ const Product = ({ product }) => {
           <div className="w-[200px] mx-auto flex justify-center items-center">
             <img
               className="max-h-[160px] group-hover:scale-110 transition duration-300 -order-10"
-              src={LaptopImg}
+              src={"/api/image/"+product_image}
               alt="hell"
             />
           </div>
@@ -37,7 +38,7 @@ const Product = ({ product }) => {
         <div className="absolute top-6 -right-1 group-hover:right-5 p-2 flex opacity-0 flex-col justify-center items-center gap-y-2 group-hover:opacity-100 transition-all duration-300 w-0 group-hover:w-fit z-30">
         <Tooltip className="border border-blue-gray-50 bg-white px-4 py-3 shadow-xl shadow-black/10"
       content={<div className="w-max"><Typography color="blue-gray" className="font-medium">Add to Cart</Typography></div>} placement="right">
-        <button onClick={()=>{cart_add(product_id)}}>
+        <button onClick={()=>{cart_add(product_id);setCart(!cart);}}>
             <div className="flex justify-center items-center text-white w-12 h-12 bg-teal-500">
               <BsPlus className="text-3xl" />
             </div>

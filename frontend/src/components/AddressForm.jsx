@@ -14,21 +14,20 @@ const AddressForm = (props) => {
     function handleOpen(){
         setOpen(!open);
     }
-    const [line1,setLine1]=useState('');
-    const [line2,setLine2]=useState('');
-    const [state,setState]=useState('');
-    const [city,setCity]=useState('');
-    const [pincode,setPincode]=useState('');
-    const [primary,setPrimary]=useState(false);
-    if (props.type=='Change address'){
-        useEffect(()=>{fetch("/api/dashboard/aboutuser").then(res=>res.json()).then(data=>{
-            setLine1(data.line1);
-            setLine2(data.line2);
-            setState(data.state);
-            setCity(data.city);
-            setPincode(data.pincode);
-    })},[]);
-    }
+    const line1=props.line1;
+    const line2=props.line2;
+    const state=props.state;
+    const city=props.city;
+    const pincode=props.pincode;
+    const primary=props.primary;
+    const setLine1=props.setLine1;
+    const setLine2=props.setLine2;
+    const setState=props.setState;
+    const setCity=props.setCity;
+    const setPincode=props.setPincode;
+    const setPrimary=props.setPrimary;
+    const address_changed=props.address_changed;
+    const setAddress_changed=props.setAddress_changed;
     return (
         <>
             <Button onClick={handleOpen}>{props.type}</Button>
@@ -39,7 +38,7 @@ const AddressForm = (props) => {
             className="bg-transparent shadow-none"
         >
           <Card className="mx-auto w-full max-w-[24rem]">
-            <form onSubmit={(e)=>{e.preventDefault()}}>
+            <form onSubmit={(e)=>{e.preventDefault();setAddress_changed(true)}}>
             <CardBody className="flex flex-col gap-4">
               <Typography variant="h4" color="blue-gray">
                 Address Details

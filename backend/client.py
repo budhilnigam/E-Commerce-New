@@ -43,9 +43,8 @@ def list_of_products(category):
 @app.route("/product/<int:product_id>")
 def product_details(product_id):
     if Products.query.filter_by(product_id=product_id).first():
-        return {"details":singlequeryconverter(Products.query.filter_by(product_id=product_id).first())},200
-    else:
-        return {"message":"Not found"},404
+        return {"details":dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.stock,Products.specs,Products.brand,Products.rating,Sellers.seller_name,Categories.category_name).join(Sellers,Sellers.seller_id==Products.seller_id).join(Categories,Categories.category_id==Products.category_id).filter(Products.product_id==product_id).all())[0],"added":Carts.query.filter_by(user_id=current_user.user_id,product_id=product_id).count(),"wishlisted":Wishlists.query.filter_by(user_id=current_user.user_id,product_id=product_id).count()},200
+    return {"message":"Not found"},404
     
 @app.route("/dashboard/aboutuser")
 def about_user():
@@ -69,7 +68,7 @@ def add_address():
 
 @app.route("/cart")
 def cart():
-    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Sellers.seller_name,Carts.quantity).join(Carts,Products.product_id==Carts.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Carts.user_id==current_user.user_id).all())}
+    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Products.stock,Sellers.seller_name,Carts.quantity).join(Carts,Products.product_id==Carts.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Carts.user_id==current_user.user_id).all())}
 
 @app.route("/cart/add",methods=['GET','POST'])
 def add_to_cart():
@@ -104,7 +103,7 @@ def dec_to_cart(amt):
 
 @app.route("/orders")
 def user_orders():
-    return {"orders":dbqueryconverter(db.session.query(Orders.order_id,Orders.user_id,Orders.product_id,Orders.quantity,Orders.status,Orders.date_order,Orders.date_delivery,Products.product_name,Products.product_image).join(Users,Users.user_id==Orders.user_id).join(Products,Products.product_id==Orders.product_id).filter(Users.user_id==current_user.user_id).all())}
+    return {"orders":dbqueryconverter(db.session.query(Orders.order_id,Orders.user_id,Orders.product_id,Orders.price,Orders.quantity,Orders.status,Orders.date_order,Orders.date_delivery,Products.product_name,Products.product_image,Products.specs,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Users,Users.user_id==Orders.user_id).join(Products,Products.product_id==Orders.product_id).join(Addresses).filter(Users.user_id==current_user.user_id).all())}
 
 @app.route("/order",methods=['GET','POST'])
 def place_order():
@@ -129,4 +128,4 @@ def place_order():
 
 @app.route("/image/<string:name>")
 def send_image(name):
-    return send_file("./uploads/asus_vivobook.jpg")
+    return send_file("./uploads/"+name)

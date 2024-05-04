@@ -7,11 +7,11 @@ const Home=()=>{
         fetch("/api/products/all").then(res=>res.json()).then(data=>{console.log(data.products);setAllProducts(data.products);})
     }
     useEffect(()=>{
-        fetch_allProducts()
+        fetch_allProducts();
     },[]);
     return (
         <div className="-mt-10 ">  
-            <div className="w-full mx-auto border border-red-300 flex justify-between">
+            <div className="w-full mx-autoflex justify-between">
             <img src={HomePageImage}></img>
             </div>
             <section className="py-20">

@@ -2,7 +2,7 @@ import laptopad from '../assets/laptopbanner2.jpg'
 import { useEffect,useState } from 'react';
 import Product from '../components/Product';
 
-const Laptops=()=>{
+const Laptops=(props)=>{
     const [allProducts,setAllProducts]=useState([]);
     async function fetch_allProducts(){
         fetch("/api/products/laptops").then(res=>res.json()).then(data=>{console.log(data.products);setAllProducts(data.products);})
@@ -23,7 +23,7 @@ const Laptops=()=>{
                {allProducts.map((product,i) => {
                 if (i<10){
                 return (
-                    <Product product={product} key={product.product_id}/>
+                    <Product product={product} key={product.product_id} cart={props.cart} setCart={props.setCart}/>
                 );
                 }
                 })}

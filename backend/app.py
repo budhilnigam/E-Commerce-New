@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager,current_user,login_required,login_user,logout_user
 from models import *
+from datetime import date,datetime
 import os
 app=Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -68,6 +69,11 @@ def user_logout():
 @app.route("/image/<string:path>")
 def image_file():
     return send_file()
+
+for i in Orders.query.filter_by(status='pending').all():
+    if(i.date_delivery<=str(date.today())):
+        i.status='delivered'
+        db.session.commit()
 
 if __name__=="__main__":
     app.run(debug=True)
