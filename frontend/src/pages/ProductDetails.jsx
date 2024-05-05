@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { FaHeart,FaShoppingCart, FaStar } from "react-icons/fa";
+import { FaHeart,FaShoppingCart, FaCheck,FaArrowRight } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import LaptopImg from "../assets/logom.webp"
 const ProductDetails = () => {
   const { id } = useParams();
   const [productDetails,setProductDetails]=useState({});
+  const [added,setAdded]=useState(false);
+  const [wishlisted,setWishlisted]=useState(false);
   const [error,setError]=useState("");
   useEffect(()=>{
-        fetch("/api/product/"+id).then(res=>res.json(),rej=>rej.json()).then(data=>setProductDetails(data.details),mssg=>setError(mssg.message));
+        fetch("/api/product/"+id).then(res=>res.json(),rej=>rej.json()).then(data=>{setProductDetails(data.details);setAdded(data.added),setWishlisted(data.wishlisted);},mssg=>setError(mssg.message));
   },[])
   async function cart_add(p_id){
     const details = { "product_id":p_id};
@@ -21,7 +23,30 @@ const ProductDetails = () => {
             console.log(data.message);
         })
   }
-  // if product is not found
+  async function wishlist_add(p_id){
+    const details = { "product_id":p_id};
+    const response = await fetch("/api/wishlist/add", {
+        method: "POST",
+        headers: {
+        'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify(details)
+        }).then((res)=>res.json(),(rej)=>rej.json()).then((data)=>{
+            console.log(data.message);
+        })
+}
+async function wishlist_delete(p_id){
+  const details = { "product_id":p_id};
+  const response = await fetch("/api/wishlist/delete", {
+      method: "DELETE",
+      headers: {
+      'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify(details)
+      }).then((res)=>res.json(),(rej)=>rej.json()).then((data)=>{
+          console.log(data.message);
+      })
+}
   if (error!="") {
     return (
       <section className="h-screen flex justify-center items-center">
@@ -31,10 +56,10 @@ const ProductDetails = () => {
   }
 
   // destructure product
-  const {product_id, product_name, price, specs, product_image,mrp,stock,rating,brand,seller_name } = productDetails;
+  const {product_id, product_name, price, specs, product_image,mrp,stock,brand,seller_name } = productDetails;
   return (
     <section className="pt-[450px] md:pt-32 pb-[400px] md:pb-12 lg:py-32 flex items-center">
-      <div className="container mx-auto">
+      <div className="container mx-auto border rounded-3xl shadow-lg">
         {/* product_image and text wrapper */}
         <div className="flex flex-col lg:flex-row items-center">
           {/* product_image */}
@@ -53,9 +78,11 @@ const ProductDetails = () => {
               <li><p>Seller: {seller_name}</p></li>
             </ul>
             <span className="flex gap-x-3 mt-4">
-                <button className='bg-teal-500 py-4 px-8 text-white flex justify-center items-center' onClick={()=>{cart_add(product_id);}}>Add to cart<FaShoppingCart className="ml-2"/></button>
-                <button className="bg-red-600 py-4 px-8 text-white flex justify-center items-center">Wishlist<FaHeart className="ml-2"/></button>
+                {added===0?<button className='bg-teal-500 py-4 px-8 text-white flex justify-center items-center' onClick={()=>{cart_add(product_id);}}>Add to cart<FaShoppingCart className="ml-2"/></button>:<button className='bg-teal-500 py-4 px-8 text-white flex justify-center items-center' onClick={()=>{cart_add(product_id);}}>Go to cart<FaArrowRight className="ml-2"/></button>}
+                {wishlisted===0?<button className="bg-red-600 py-4 px-8 text-white flex justify-center items-center" onClick={()=>{wishlist_add(product_id);}}>Wishlist<FaHeart className="ml-2"/></button>:<button className="bg-red-600 py-4 px-8 text-white flex justify-center items-center" onClick={()=>{wishlist_add(product_id);}}>Wishlisted <FaCheck className="ml-2"/></button>}
             </span>
+            <span>{added}</span>
+            <span>{wishlisted}</span>
           </div>
         </div>
       </div>

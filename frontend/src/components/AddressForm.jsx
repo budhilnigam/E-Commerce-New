@@ -75,7 +75,7 @@ const AddressForm = (props) => {
               </div>
             </CardBody>
             <CardFooter className="pt-0">
-              <Button variant="gradient" type="submit" fullWidth>
+              <Button variant="gradient" type="submit" fullWidth onClick={()=>{handleOpen();setAddress_changed(true);}}>
                 Confirm Address
               </Button>
             </CardFooter>

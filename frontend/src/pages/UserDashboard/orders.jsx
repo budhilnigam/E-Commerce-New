@@ -59,9 +59,9 @@ return (
             <td>
             <Link to={`/product/${order.product_id}`} className="flex">
             <img className="max-w-[180px] max-h-[100px]" src={"/api/image/"+order.product_image} alt="" />
-            <div className="flex flex-col">
+            <div className="flex flex-col ml-4">
             <p className="text-lg">{order.product_name}</p>
-            <p>{order.specs}</p>
+            <p className="text-sm text-gray-600 max-w-50 overflow-x-hidden text-nowrap">{order.specs}</p>
             </div>
             </Link>
             </td>
@@ -74,7 +74,7 @@ return (
                 </td>
                 <td className="text-start pl-3 pt-1">
                     {order.line1}<br/>
-                    {order.line2?<p>{order.line2}<br/></p>:""}
+                    {order.line2!=null?<p>{order.line2}<br/></p>:""}
                     {order.city}<br/>
                     {order.state}<br/>
                     {order.pincode}<br/>

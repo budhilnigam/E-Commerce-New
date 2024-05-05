@@ -1,6 +1,6 @@
 from __main__ import app,current_user
 from models import *
-from flask import jsonify,json,request,send_file
+from flask import jsonify,json,request,send_file,url_for
 
 def queryconverter(query):
     result=[]
@@ -25,7 +25,6 @@ def dbqueryconverter(query):
         result.append({})
         for j in r._mapping:
             result[len(result)-1][j]=r._mapping[j]
-    print(result)
     return result
 
 
@@ -54,21 +53,9 @@ def about_user():
     else:
         return dbqueryconverter(db.session.query(Users.user_name,Users.email_id).filter(Users.user_id==current_user.user_id).all())[0]
 
-@app.route("/addaddress",methods=['GET','POST'])
-def add_address():
-    response=request.get_json()
-    primary=response['primary']
-    addr=Addresses(line1=response['line1'],line2=response['line2'],city=response['city'],state=response['state'],pincode=response['pincode'])
-    db.session.add(addr)
-    db.session.commit()
-    if primary=='true':
-        current_user.addr_id=addr.addr_id
-        db.session.commit()
-    return {"addr_id":addr.addr_id}
-
 @app.route("/cart")
 def cart():
-    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Products.stock,Sellers.seller_name,Carts.quantity).join(Carts,Products.product_id==Carts.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Carts.user_id==current_user.user_id).all())}
+    return {"cart":dbqueryconverter(db.session.query(Products.product_name,Products.product_image,Products.price,Products.product_id,Products.specs,Products.brand,Products.stock,Products.mrp,Sellers.seller_name,Carts.quantity).join(Carts,Products.product_id==Carts.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Carts.user_id==current_user.user_id).all())}
 
 @app.route("/cart/add",methods=['GET','POST'])
 def add_to_cart():
@@ -103,19 +90,36 @@ def dec_to_cart(amt):
 
 @app.route("/orders")
 def user_orders():
-    return {"orders":dbqueryconverter(db.session.query(Orders.order_id,Orders.user_id,Orders.product_id,Orders.price,Orders.quantity,Orders.status,Orders.date_order,Orders.date_delivery,Products.product_name,Products.product_image,Products.specs,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Users,Users.user_id==Orders.user_id).join(Products,Products.product_id==Orders.product_id).join(Addresses).filter(Users.user_id==current_user.user_id).all())}
+    return {"orders":dbqueryconverter(db.session.query(Orders.order_id,Orders.user_id,Orders.product_id,Orders.price,Orders.quantity,Orders.status,Orders.date_order,Orders.date_delivery,Products.product_name,Products.product_image,Products.specs,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Users,Users.user_id==Orders.user_id).join(Products,Products.product_id==Orders.product_id).join(Addresses,Addresses.addr_id==Orders.addr_id).filter(Users.user_id==current_user.user_id).order_by(Orders.date_order.desc(),Orders.order_id.desc()).all())}
 
 @app.route("/order",methods=['GET','POST'])
 def place_order():
     response=request.get_json()
-    print(response)
+    print('a',response)
     product_id=response['product_id']
     quantity=response['quantity']
     price=response['price']
     address_changed=response['address_changed']
+    primary=response['primary']
+    if primary:
+        type='primary'
+    else:
+        type='temporary'
     addr_id=current_user.addr_id
-    if address_changed=='true':
-        addr_id=add_address({'line1':response['line1'],'line2':response['line2'],'city':response['city'],'state':response['state'],'pincode':response['pincode'],'primary':response['primary']})['addr_id']
+    if address_changed==True:
+        if not primary:
+            addr=Addresses(line1=response['line1'],line2=response['line2'],city=response['city'],state=response['state'],pincode=response['pincode'],type=type)
+            db.session.add(addr)
+            db.session.commit()
+            addr_id=addr.addr_id
+        else:
+            addr=Addresses.query.filter_by(addr_id=addr_id).first()
+            addr.line1=response['line1']
+            addr.line2=response['line2']
+            addr.city=response['city']
+            addr.state=response['state']
+            addr.pincode=response['pincode']
+            db.session.commit()
     if Products.query.filter_by(product_id=product_id).first().stock<quantity:
         return {"message":"Not enough stock"},400
     order=Orders(product_id=product_id,user_id=current_user.user_id,quantity=quantity,price=price,addr_id=addr_id)
@@ -126,6 +130,34 @@ def place_order():
     db.session.commit()
     return {"message":"Order placed"},200
 
+@app.route("/wishlist")
+def wishlist():
+    return {"wishlist":dbqueryconverter(db.session.query(Wishlists.product_id,Products.product_name,Products.product_image,Products.specs,Products.stock,Products.price,Products.mrp,Sellers.seller_name).join(Products,Wishlists.product_id==Products.product_id).join(Sellers,Products.seller_id==Sellers.seller_id).filter(Wishlists.user_id==current_user.user_id).all())}
+
+@app.route("/wishlist/add",methods=['GET','POST'])
+def add_to_wishlist():
+    response=request.get_json()
+    product_id=response['product_id']
+    if Wishlists.query.filter_by(user_id=current_user.user_id,product_id=product_id).first():
+        return {"message":"Already in wishlist"},300
+    wishlist=Wishlists(current_user.user_id,product_id=product_id)
+    db.session.add(wishlist)
+    db.session.commit()
+    return {"message":"Item added"},200
+
+@app.route("/wishlist/delete",methods=['GET','DELETE'])
+def delete_from_wishlist():
+    response=request.get_json()
+    product_id=response['product_id']
+    if Wishlists.query.filter_by(user_id=current_user.user_id,product_id=product_id).first():
+        wishlist=Wishlists.query.filter_by(user_id=current_user.user_id,product_id=product_id).first()
+        db.session.delete(wishlist)
+        db.session.commit()
+        return {"message":"Item removed"},200
+    return {"message":"Not found"},404
+
 @app.route("/image/<string:name>")
 def send_image(name):
     return send_file("./uploads/"+name)
+
+
