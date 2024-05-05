@@ -65,17 +65,17 @@ async function wishlist_delete(p_id){
         {/* product_image and text wrapper */}
         <div className="flex flex-col lg:flex-row items-center">
           {/* product_image */}
-          <div className="flex flex-1 justify-center items-center mb-8 lg:mb-0">
-            <img className="max-w-[200px] lg:max-w-xs" src={"/api/image/"+product_image} alt="" />
+          <div className="flex flex-1 justify-center items-center my-8 lg:mb-0">
+            <img className="max-w-[200px] lg:max-w-xs" src={"/api/image/"+product_image} alt="No preview available" />
           </div>
           {/* text */}
-          <div className="flex-1 px-4 pr-20 text-center lg:text-left">
+          <div className="flex-1 px-4 pr-20 text-center lg:text-left mt-4">
             <div className="flex justify-between">
-            <p className="text-[26px] font-medium mb-2 max-w-[450px] mx-auto lg:mx-0">{product_name}</p>
-            <div className="text-2xl text-green-600 font-medium mb-6">₹{price}<p className="text-[18px] text-gray-600 line-through">₹{mrp}</p></div>
+            <p className="text-[26px] font-medium mb-2 max-w-[450px] mx-auto lg:mx-0 text-left">{product_name}</p>
+            <div className="text-3xl text-green-600 font-medium mb-6 my-auto">₹{price}<p className="text-[18px] text-gray-600 line-through">₹{mrp}</p></div>
             </div>
-            <ul className="items-start w-max mx-auto md:mx-1 flex flex-col text-gray-600 overflow-x-auto justify-center justify-items-center">  
-              <li><p className="mb-2">{specs}</p></li>
+            <ul className="items-start w-max mx-auto md:mx-1 flex flex-col text-gray-600 justify-center justify-items-center">  
+              <li><p className="mb-2 text-wrap overflow-y-auto max-w-[450px] max-h-40 justify-start text-left">{specs}</p></li>
               <li><p>Brand: {brand}</p></li>
               <li><p>Seller: {seller_name}</p></li>
               {stock>0&&stock<10?<li><p className="text-red-300">Only {stock} available !</p></li>:""}

@@ -4,7 +4,8 @@ import Home from './pages/home'
 import Laptops from './pages/laptops'
 import Mobiles from './pages/mobiles'
 import LoginUser from './pages/loginuser'
-import { Navbar } from './components/Header'
+import Navbar from './components/Header'
+import Footer from './components/Footer'
 import ProductDetails from './pages/ProductDetails'
 import UserProfile from './pages/UserDashboard/profile'
 import SignupUser from './pages/signupuser'
@@ -30,7 +31,7 @@ function App() {
       <BrowserRouter>
       <Navbar userAuth={userAuth} setUserAuth={setUserAuth} cart={cart} setCart={setCart}/>
         <Routes>
-          <Route path='/' element={<Home />}></Route>
+          <Route path='/' element={<Home cart={cart} setCart={setCart} />}></Route>
           <Route path='/laptops' element={<Laptops cart={cart} setCart={setCart}/>}></Route>
           <Route path='/mobiles' element={<Mobiles cart={cart} setCart={setCart}/>}></Route>
           <Route path='/product/:id' element={<ProductDetails cart={cart} setCart={setCart}/>}></Route>
@@ -42,6 +43,7 @@ function App() {
           <Route path='/wishlist' element={<Wishlist/>}></Route>
           <Route path='/checkout' element={<CheckoutPage/>}></Route>
         </Routes>
+        <Footer/>
       </BrowserRouter>
     </>
   )

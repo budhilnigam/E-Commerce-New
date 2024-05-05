@@ -36,12 +36,12 @@ function date_conv(inputDate){
 return (
 <div className="flex">
 <div className="hidden md:block"><Dashboard/></div>
-<div className="mx-auto px-4 w-full md:w-4/5">
+<div className="mx-auto px-4 w-full md:w-4/5 mt-5">
     <h1 className="text-2xl font-semibold mb-4">My Orders</h1>
 <div className="flex flex-col gap-4">
 {/*orders*/}
 <div className="w-full">
-<div className="bg-white rounded-lg shadow-md p-6 mb-4">
+<div className="bg-white rounded-lg shadow-md p-6 mb-4 overflow-auto">
 <table className="w-full border-none" cellPadding={12}>
     <tbody>
     <tr className="">
@@ -54,14 +54,14 @@ return (
     </tr>
     {orders.map((order,i)=>{
         return (                               
-        <tr key={"ordertitem"+i} className="gap-x-4 py-2 lg:px-6 border-b border-gray-200 w-full font-light min-h-[150px] items-center">
+        <tr key={"ordertitem"+i} className="md:gap-x-4 py-2 md:px-6 border-b border-gray-200 w-full font-light min-h-[150px] items-center">
             {/* image */}
             <td>
             <Link to={`/product/${order.product_id}`} className="flex">
-            <img className="max-w-[180px] max-h-[100px]" src={"/api/image/"+order.product_image} alt="" />
-            <div className="flex flex-col ml-4">
+            <img className="max-w-[50px] max-h-[50px] md:max-w-[180px] md:max-h-[100px] object-fill" src={"/api/image/"+order.product_image} alt="" />
+            <div className="flex flex-col ml-4 max-w-16 max-h-48 md:max-w-48 md:max-h-48 overflow-clip">
             <p className="text-lg">{order.product_name}</p>
-            <p className="text-sm text-gray-600 max-w-50 overflow-x-hidden text-nowrap">{order.specs}</p>
+            <p className="text-sm text-gray-600 max-w-50 overflow-x-hidden">{order.specs}</p>
             </div>
             </Link>
             </td>
@@ -84,7 +84,7 @@ return (
                 </td>
                 {/* remove icon */}
                 <td className="text-center">{`₹ ${parseFloat(
-                    order.price
+                    order.price*1.18
                     ).toFixed(2)}`}
                 </td>
         </tr>

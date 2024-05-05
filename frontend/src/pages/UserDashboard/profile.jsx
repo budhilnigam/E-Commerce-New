@@ -16,7 +16,7 @@ const UserProfile = () => {
     return (
         <div className="flex flex-row">
             <Dashboard />
-            <section className="ml-3 w-full">
+            <section className="ml-3 w-full mt-5">
             <p className="text-3xl font-semibold mb-10 px-4">About you</p>
             <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-gray-200">

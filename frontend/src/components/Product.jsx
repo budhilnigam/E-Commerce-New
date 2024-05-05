@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React,{ReactHtm} from "react";
+import { Link } from "react-router-dom";
 import {FaHeart} from "react-icons/fa"
 import { BsPlus, BsEyeFill } from "react-icons/bs";
 import LaptopImg from "../assets/logom.webp"
@@ -78,19 +78,19 @@ const Product = (props) => {
     <Link to={`/product/${product_id}`} className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl max-h-52">
     <img
       src={"/api/image/"+product_image}
-      alt="card-image" className=" object-contain w-full h-full" />
+      alt="No preview available" className=" object-contain w-full h-full" />
     </Link>
     <Link className="p-6" to={`/product/${product_id}`}>
     <div className="flex items-center justify-between mb-2">
-      <p className="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
+      <p className="block font-sans text-base text-wrap overflow-y-clip font-medium leading-relaxed text-blue-gray-900 max-h-24 mb-2">
         {product_name}
       </p>
-      <div className="flex font-sans font-medium leading-relaxed text-blue-gray-900">
+      <div className="flex font-sans font-medium leading-relaxed text-blue-gray-900 self-start">
         <p className=" text-green-800 font-bold">₹{price}</p>
         <p className="ml-1 text-[12px] text-gray-700 line-through self-center">₹{mrp}</p>
       </div>
     </div>
-    <p className="block font-sans text-sm antialiased font-normal leading-normal text-gray-700 opacity-75">
+    <p className="font-sans text-sm  font-normal leading-normal text-gray-700 opacity-75 max-h-32 overflow-y-hidden">
       {specs}
     </p>
     </Link>

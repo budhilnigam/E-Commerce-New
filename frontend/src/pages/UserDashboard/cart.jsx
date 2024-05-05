@@ -85,6 +85,7 @@ function product_order(){
 }
 useEffect(()=>{get_address()},[]);
 useEffect(()=>{get_cart()},[]);
+useEffect(()=>{get_cart()},[cart]);
 function getTotalCost(total,obj){
     if(obj.stock!=0){
     return total+obj.price*obj.quantity;
@@ -105,7 +106,7 @@ if (!cart) {
     return (
         <div className="flex">
         <div className="hidden md:block"><Dashboard/></div>
-        <div className="mx-auto px-4 w-full md:w-4/5">
+        <div className="mx-auto mt-5 px-4 w-full md:w-4/5">
             <h1 className="text-2xl font-semibold mb-4">Your cart is empty...<Link to={"/"} className="text-blue-500">Shop Now !</Link></h1>
         </div>
         </div>
@@ -131,24 +132,25 @@ return (
 <div className="bg-white rounded-lg shadow-md p-6 mb-4">
     {cart.map((product,i)=>{
         return (                               
-        <div key={"cartitem"+i} className={`${product.stock==0?"opacity-50":"opacity-100"} flex gap-x-4 py-2 lg:px-6 border-b border-gray-200 w-full font-light`}>
+        <div key={"cartitem"+i} className={`${product.stock==0?"opacity-50":"opacity-100"} flex gap-x-4 py-2 lg:px-6 border-b border-gray-200 w-full font-light overflow-auto`}>
         <div className="w-full min-h-[150px] flex items-center gap-x-4">
             {/* image */}
             <Link to={`/product/${product.product_id}`}>
-            <img className="max-w-[180px] max-h-[100px]" src={"/api/image/"+product.product_image} alt="" />
+            <img className="max-w-[180px] max-h-[100px]" src={"/api/image/"+product.product_image} alt="No preview available" />
             </Link>
             <div className="w-full flex flex-col">
             {/* title and remove icon */}
             <div className="flex justify-between mb-2">
                 {/* title */}
                 <Link to={`/product/${product.product_id}`}>
-                <p className="text-md font-medium">{product.product_name}</p>
+                <p className="text-md font-medium text-wrap max-w-60 max-h-12 overflow-clip">{product.product_name}</p>
                 <span className="flex">
                 <p className="text-sm text-gray-800 text-nowrap overflow-x-hidden max-w-72">{product.specs}</p>
                 <p className="text-sm text-gray-800">...</p>
                 </span>
                 <p className="text-sm text-gray-800">Seller: {product.seller_name}</p>
                 </Link>
+                <div className="flex gap-x-16">
                 <div className="text-[14px] text-green-600">
                 Delivery by {longDateFormat}
                 </div>
@@ -158,6 +160,7 @@ return (
                 className="text-xl cursor-pointer"
                 >
                 <IoMdClose onClick={()=>{cart_less(product.product_id,'all');window.location.reload();}} className="text-gray-500 hover:text-red-500 transition" />
+                </div>
                 </div>
             </div>
             <div className="flex gap-x-2 h-[36px] text-sm">
@@ -230,9 +233,9 @@ return (
     <hr className="my-2"/>
     <div className="flex justify-between mb-2">
         <span className="font-semibold">Total</span>
-        <span className="font-semibold">₹ {total_cost*1.18}</span>
+        <span className="font-semibold">₹ {parseFloat(total_cost*1.18).toFixed(2)}</span>
     </div>
-        <button onClick={()=>{product_order();}} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
+        <button onClick={()=>{product_order();setCart(false);}} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
     </div>
     </div>
     </div>

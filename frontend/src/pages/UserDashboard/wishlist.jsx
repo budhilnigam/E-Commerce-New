@@ -37,7 +37,7 @@ async function wishlist_delete(p_id){
         return (
             <div className="flex">
             <div className="hidden md:block"><Dashboard/></div>
-            <div className="mx-auto px-4 w-full md:w-4/5">
+            <div className="mx-auto px-4 w-full md:w-4/5 mt-5">
                 <h1 className="text-2xl font-semibold mb-4">Your Wishlist is empty...<Link to={"/"} className="text-blue-500">Shop Now !</Link></h1>
             </div>
             </div>
