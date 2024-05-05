@@ -1,6 +1,7 @@
 from __main__ import app,current_user
 from models import *
 from flask import jsonify,json,request,send_file,url_for
+from sqlalchemy import func
 
 def queryconverter(query):
     result=[]
@@ -34,9 +35,10 @@ def list_of_products(category):
         products=queryconverter(Products.query.all())
     elif category=="laptops":
         #print(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop').all())
-        products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop').all())
+        products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Products.rating,func.count(Orders.order_id).label('order_count')).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(Categories.category_name=='laptop').all())
+        print(products)
     elif category=="mobiles":
-        products=queryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).join(Categories).filter(Categories.category_name=='phone').all())
+        products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Products.rating,func.count(Orders.order_id)).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(Categories.category_name=='mobiles').all())
     return {"products":products}
 
 @app.route("/product/<int:product_id>")

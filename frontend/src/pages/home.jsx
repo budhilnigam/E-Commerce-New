@@ -1,7 +1,7 @@
 import React,{ useState,useEffect } from "react";
 import Product from "../components/Product";
 import HomePageImage from "../assets/HomePageAd.png"
-const Home=()=>{
+const Home=(props)=>{
     const [allProducts,setAllProducts]=useState([]);
     async function fetch_allProducts(){
         fetch("/api/products/all").then(res=>res.json()).then(data=>{console.log(data.products);setAllProducts(data.products);})
@@ -22,7 +22,7 @@ const Home=()=>{
                {allProducts.map((product,i) => {
                 if (i<10){
                 return (
-                    <Product product={product} key={product.product_id}/>
+                    <Product product={product} key={product.product_id}  cart={props.cart} setCart={props.setCart}/>
                 );
                 }
                 })}

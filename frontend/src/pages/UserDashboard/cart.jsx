@@ -144,7 +144,7 @@ return (
                 <Link to={`/product/${product.product_id}`}>
                 <p className="text-md font-medium">{product.product_name}</p>
                 <span className="flex">
-                <p className="text-sm text-gray-800 text-nowrap overflow-x-hidden max-w-72 border">{product.specs}</p>
+                <p className="text-sm text-gray-800 text-nowrap overflow-x-hidden max-w-72">{product.specs}</p>
                 <p className="text-sm text-gray-800">...</p>
                 </span>
                 <p className="text-sm text-gray-800">Seller: {product.seller_name}</p>
