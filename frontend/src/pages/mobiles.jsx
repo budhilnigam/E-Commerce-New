@@ -46,7 +46,7 @@ const Mobiles=(props)=>{
         }
     }
     return (
-        <>
+        <div className='bg-gradient-to-b from-blue-50 to-blue-400'>
         <CarouselTransition/>
         <section className="py-20">
             <div className="container mx-auto">
@@ -74,7 +74,7 @@ const Mobiles=(props)=>{
             </div>
             </div>
             </section>
-        </>
+        </div>
     )
 }
 

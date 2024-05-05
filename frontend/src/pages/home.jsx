@@ -6,6 +6,8 @@ import MobilesImg from "../assets/smartphones.webp"
 import HomePageImage from "../assets/HomePageAd.png"
 import { Carousel } from "@material-tailwind/react";
 import { FaArrowRight } from "react-icons/fa";
+import { MdElectricBolt } from "react-icons/md";
+import {GiProcessor} from "react-icons/gi";
 function CarouselTransition() {
     return (
       <Carousel autoplay={true} loop={true} transition={{ duration: 1 }}>
@@ -28,7 +30,7 @@ function CarouselTransition() {
     );
 }
 const Home=(props)=>{
-    const [allProducts,setAllProducts]=useState([]);
+    const [allProducts,setAllProducts]=useState(false);
     const [viewLaptop,setViewLaptop]=useState(false);
     const [viewMobile,setViewMobile]=useState(false);
     const [sort,setSort]=useState("Relevance");
@@ -36,7 +38,7 @@ const Home=(props)=>{
         fetch("/api/products/all").then(res=>res.json()).then(data=>{console.log(data.products);setAllProducts(data.products);})
     }
     useEffect(()=>{
-        fetch_allProducts();
+        setTimeout(()=>fetch_allProducts(),3000);
     },[]);
     useEffect(()=>{},[sort]);
     function sortedResults(e){
@@ -50,6 +52,13 @@ const Home=(props)=>{
         } else if(e.target.value==="Relevance"){
             allProducts.sort((a,b)=>a.product_id-b.product_id);
         }
+    }
+    if (allProducts===false) {
+        return (
+            <div className="fixed -top-0 z-20 bg-white text-5xl w-screen h-screen flex justify-center align-middle items-center font-['Papyrus']">
+                <GiProcessor className="text-yellow-700 animate-fade text-[80px] mr-4"/><p>ElectroMart</p>
+            </div>
+        );
     }
     return (
         <div>  
