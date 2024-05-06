@@ -2,9 +2,11 @@ import Dashboard from "./dashboard";
 import { useState,useEffect } from "react";
 import {IoMdClose,IoMdRemove,IoMdAdd} from "react-icons/io"
 import { Link } from "react-router-dom";
+import Confetti from "react-confetti";
 import AddressForm from "../../components/AddressForm";
-const Cart=()=>{
-const [cart,setCart]=useState(false)
+const Cart=(props)=>{
+const [cart,setCart]=useState(false);
+const setCartprop=props.setCart;
 async function get_cart(){
     await fetch("/api/cart").then(res=>res.json()).then(data=>{
         setCart(data.cart);
@@ -83,9 +85,9 @@ function product_order(){
         }
     }
 }
+const [checkout,setCheckout]=useState(false);
 useEffect(()=>{get_address()},[]);
 useEffect(()=>{get_cart()},[]);
-useEffect(()=>{get_cart()},[cart]);
 function getTotalCost(total,obj){
     if(obj.stock!=0){
     return total+obj.price*obj.quantity;
@@ -105,6 +107,15 @@ if (!cart) {
 } else if (cart.length === 0) {
     return (
         <div className="flex">
+        {checkout?<div className="z-20"><Confetti recycle={false} numberOfPieces={2000} tweenDuration={500}/></div>:""}
+        {checkout?<div className="absolute w-screen h-screen top-0 left-0 z-10 flex justify-center items-center border border-red-200 bg-black bg-opacity-50">
+        <div className="bg-green-100 border-b-8 border-green-500 text-green-700 rounded-lg animate-fade">
+        <div className="p-4">
+            <p className="text-xl font-semibold flex items-center justify-between">Order Status: Confirmed <IoMdClose className="cursor-pointer" onClick={()=>setCheckout(false)}/></p>
+            <p className="text-lg">Your order has been successfully confirmed and is now being processed.</p>
+        </div>
+        </div>
+        </div>:""}
         <div className="hidden md:block"><Dashboard/></div>
         <div className="mx-auto mt-5 px-4 w-full md:w-4/5">
             <h1 className="text-2xl font-semibold mb-4">Your cart is empty...<Link to={"/"} className="text-blue-500">Shop Now !</Link></h1>
@@ -235,7 +246,7 @@ return (
         <span className="font-semibold">Total</span>
         <span className="font-semibold">₹ {parseFloat(total_cost*1.18).toFixed(2)}</span>
     </div>
-        <button onClick={()=>{product_order();setCart(false);}} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
+        <button onClick={()=>{product_order();setCart([]);setCheckout(true);setCartprop(0);}} className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
     </div>
     </div>
     </div>

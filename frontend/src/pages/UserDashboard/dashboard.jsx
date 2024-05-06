@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Typography,
@@ -16,8 +16,8 @@ import {
  
 import { FaHeart,FaBoxOpen } from "react-icons/fa";
 const Dashboard=()=>{
-    async function authorization(){
-        await fetch('/api/user').then(res=>res.json()).then(data=>{
+    function authorization(){
+        fetch('/api/user').then(res=>res.json()).then(data=>{
             if(data.status==='notauthenticated'){
                 return false;
             } else if (data.status==='authenticated'){
@@ -25,7 +25,10 @@ const Dashboard=()=>{
             }
         }
     )}
-    const auth=authorization();
+    let auth;
+    useEffect(()=>{
+        auth=authorization();
+    },[])
     if (auth===false){
         return <Navigate to="/login" />
     }

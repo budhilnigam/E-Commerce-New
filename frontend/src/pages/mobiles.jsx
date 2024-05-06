@@ -1,4 +1,5 @@
 import mobilead from '../assets/phonebanner.jpg'
+import oneplusad from "../assets/oneplusad.png"
 import { useState,useEffect } from 'react';
 import Product from '../components/Product';
 import { Carousel } from "@material-tailwind/react";
@@ -13,7 +14,7 @@ function CarouselTransition() {
         <img
           src={mobilead}
           alt="image 2"
-          className="h-full w-full object-cover"
+          className="h-full w-full obje"
         />
         <img
           src={mobilead}

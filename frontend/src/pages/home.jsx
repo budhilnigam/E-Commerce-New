@@ -56,7 +56,7 @@ const Home=(props)=>{
     if (allProducts===false) {
         return (
             <div className="fixed -top-0 z-20 bg-white text-5xl w-screen h-screen flex justify-center align-middle items-center font-['Papyrus']">
-                <GiProcessor className="text-yellow-700 animate-fade text-[80px] mr-4"/><p>ElectroMart</p>
+                <GiProcessor className="text-yellow-700 animate-fade text-[80px] mr-4"/><p className="animate-fade">ElectroMart</p>
             </div>
         );
     }

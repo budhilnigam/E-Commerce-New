@@ -63,7 +63,7 @@ class Categories(db.Model):
 class Products(db.Model):
     __searchable__=['product_name','specs','brand']
     product_id = db.Column(db.Integer, primary_key=True,autoincrement=True)
-    product_image = db.Column(db.String)
+    product_image = db.Column(db.String,default='nopreview.jpeg')
     seller_id = db.Column(db.ForeignKey(Users.user_id), nullable=False)
     product_name = db.Column(db.Text, nullable=False)
     category_id = db.Column(db.ForeignKey(Categories.category_id))

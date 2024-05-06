@@ -24,7 +24,7 @@ import {
     ShoppingCartIcon
   } from "@heroicons/react/24/solid";
 
-export const Navbar = (props) => {
+const Navbar = (props) => {
     const userAuth=props.userAuth;
     const setUserAuth=props.setUserAuth;
     const [openNav,setOpenNav]=useState(false);

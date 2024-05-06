@@ -9,17 +9,17 @@ function CarouselTransition() {
         <img
           src={laptopad}
           alt="image 1"
-          className="h-full w-full object-cover"
+          className="h-min w-full object-cover"
         />
         <img
           src={laptopad}
           alt="image 2"
-          className="h-full w-full object-cover"
+          className="h-min w-full object-contain"
         />
         <img
           src={laptopad}
           alt="image 3"
-          className="h-full w-full object-cover"
+          className="h-min w-full object-cover"
         />
       </Carousel>
     );
@@ -42,7 +42,7 @@ const Laptops=(props)=>{
             allProducts.sort((a,b)=>b.price-a.price);
         } else if(e.target.value==="Price- Low to High"){
             allProducts.sort((a,b)=>a.price-b.price);
-        } else if(e.target.value==="Relevance"){
+        } else if(e.target.value==="Newest first"){
             allProducts.sort((a,b)=>a.product_id-b.product_id);
         }
     }

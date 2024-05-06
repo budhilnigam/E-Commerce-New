@@ -46,7 +46,7 @@ async function wishlist_delete(p_id){
     return (
         <div className="flex">
         <div className="hidden md:block"><Dashboard/></div>
-        <div className="mx-auto px-4 w-full md:w-4/5">
+        <div className="mx-auto px-4 w-full md:w-4/5 mt-5">
             <h1 className="text-2xl font-semibold mb-4">Your Wishlist</h1>
         <div className="flex flex-col md:flex-row gap-4">
         {/*Products*/}
@@ -62,12 +62,12 @@ async function wishlist_delete(p_id){
                     </Link>
                     <div className="w-full flex flex-col">
                     {/* title and remove icon */}
-                    <div className="flex justify-between mb-2">
+                    <div className="flex justify-between mb-2 overflow-auto max-w-42">
                         {/* title */}
                         <Link to={`/product/${product.product_id}`}>
                         <p className="text-md font-medium">{product.product_name}</p>
                         <span className="flex">
-                        <p className="text-sm text-gray-800 text-nowrap overflow-x-hidden max-w-72 border">{product.specs}</p>
+                        <p className="text-sm text-gray-800 text-nowrap overflow-x-hidden max-w-72 ">{product.specs}</p>
                         <p className="text-sm text-gray-800">...</p>
                         </span>
                         <p className="text-sm text-gray-800">Seller: {product.seller_name}</p>
@@ -84,7 +84,7 @@ async function wishlist_delete(p_id){
                         {/* quantity */}
                         {product.stock!=0?"":<p className="text-red-400">Out of stock</p>}
                         {/* item price */}
-                        <div className="flex flex-1 justify-around items-center">
+                        <div className="flex flex-1 justify-end text-xl items-center">
                         ₹ {product.price}
                         </div>
                     </div>

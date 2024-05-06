@@ -1,7 +1,7 @@
 import Dashboard from "./dashboard";
 import { useState,useEffect } from "react";
-import {IoMdClose,IoMdRemove,IoMdAdd} from "react-icons/io"
 import { Link } from "react-router-dom";
+
 const Orders=()=>{
 const [orders,setOrders]=useState([])
 async function get_orders(){
@@ -58,10 +58,10 @@ return (
             {/* image */}
             <td>
             <Link to={`/product/${order.product_id}`} className="flex">
-            <img className="max-w-[50px] max-h-[50px] md:max-w-[180px] md:max-h-[100px] object-fill" src={"/api/image/"+order.product_image} alt="" />
-            <div className="flex flex-col ml-4 max-w-16 max-h-48 md:max-w-48 md:max-h-48 overflow-clip">
+            <img className="max-w-[50px] max-h-[50px] md:max-w-[100px] md:max-h-[120px] object-contain" src={"/api/image/"+order.product_image} alt="" />
+            <div className="flex flex-col ml-4 max-w-16 max-h-48 md:max-w-56 md:max-h-48 overflow-clip">
             <p className="text-lg">{order.product_name}</p>
-            <p className="text-sm text-gray-600 max-w-50 overflow-x-hidden">{order.specs}</p>
+            <p className="text-sm text-gray-600 max-w-50 overflow-hidden">{order.specs}</p>
             </div>
             </Link>
             </td>
