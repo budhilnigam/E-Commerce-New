@@ -92,7 +92,14 @@ async function wishlist_delete(p_id){
             </ul>
             <span className="flex gap-x-3 my-4">
                 {stock>0?added==0?<button className='bg-teal-500 py-4 px-8 text-white flex justify-center items-center' onClick={()=>{cart_add(product_id);setAdded(true);setCart(!cart)}}>Add to cart<FaShoppingCart className="ml-2"/></button>:<Link to={"/cart"}><button className='bg-teal-500 py-4 px-8 text-white flex justify-center items-center'>Go to cart<FaArrowRight className="ml-2"/></button></Link>:<button className='bg-gray-500 py-4 px-8 text-white flex justify-center items-center'>Out of stock</button>}
-                <button className="bg-gray-200 text-gray-900 py-4 pl-8 h-14 text-[18px] font-bold justify-center items-center flex" onClick={()=>{setWishlisted(!wishlisted)}}><p className="-mr-4">Wishlist</p><Heart isClick={wishlisted}/></button>
+                <button className="bg-gray-200 text-gray-900 py-4 pl-8 h-14 text-[18px] font-bold justify-center items-center flex" onClick={()=>{
+                  if(!wishlisted){
+                    wishlist_add(product_id);
+                  } else {
+                    wishlist_delete(product_id);
+                  }
+                  setWishlisted(!wishlisted);
+                }}><p className="-mr-4">Wishlist</p><Heart isClick={wishlisted}/></button>
             </span>
           </div>
         </div>

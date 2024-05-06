@@ -52,8 +52,8 @@ const Laptops=(props)=>{
         <section className="py-20">
             <div className="container mx-auto">
             <h1 className="text-3xl font-semibold mb-10 text-center">Explore Our Products</h1>
-            <div className='flex justify-between '>
-            <p className='mb-3'>Showing 1-{allProducts.length} products</p>
+            <div className='flex justify-between mb-7'>
+            <p>Showing 1-{allProducts.length} products</p>
             <div className='flex justify-center items-center'>
                 <p>Sort by</p>
                 <select defaultValue={"Relevance"} onChange={(e)=>{sortedResults(e)}} className='bg-white ml-1 rounded p-1'>

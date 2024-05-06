@@ -61,12 +61,12 @@ const Home=(props)=>{
         );
     }
     return (
-        <div>  
+        <div className=" bg-gradient-to-b from-blue-50 to-blue-400">  
             <div className="w-full mx-autoflex justify-between">
             <img src={HomePageImage}></img>
             </div>
             <p className="text-3xl font-semibold text-center my-4">Browse Categories</p>
-            <section className="flex border gap-2 mx-2 w-full max-h">
+            <section className="flex border gap-x-2 px-2 w-full max-h">
                 <Link className="relative w-1/2" onMouseOver={()=>setViewLaptop(true)} onMouseOut={()=>setViewLaptop(false)} to={"/laptops"}>
                     {viewLaptop?<p className={`absolute text-3xl w-full h-full bg-black text-white font-bold text-opacity-100 bg-opacity-60 flex justify-center items-center transition-all ease-in`}><p className="animate-fade">Laptops</p><FaArrowRight className="ml-2 animate-fade"/></p>:""}
                     <img src={LaptopsImg} className="object-cover w-full h-full"/>
