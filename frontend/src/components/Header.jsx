@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {MdOutlineClose} from "react-icons/md";
+import {MdOutlineClose,MdOutlineSearch} from "react-icons/md";
 import { GiProcessor } from "react-icons/gi";
 import {FaBars,FaUserCircle,FaPowerOff, FaBoxOpen,FaHeart } from "react-icons/fa"
 import {RiArrowDropDownLine} from "react-icons/ri"
@@ -28,6 +28,7 @@ const Navbar = (props) => {
     const userAuth=props.userAuth;
     const setUserAuth=props.setUserAuth;
     const [openNav,setOpenNav]=useState(false);
+    const [opensearchbox,setOpensearchbox]=useState(false);
     const [activeLink,setActiveLink]=useState(window.location.pathname);
     const cart=props.cart;
     const setCart=props.setCart;
@@ -42,7 +43,11 @@ const Navbar = (props) => {
         await fetch("/api/cart").then(res=>res.json()).then(data=>setCartTotal(data.cart.reduce(cart_count,0)))
         return null;
     }
-    useEffect(()=>{get_cart()},[cart]);
+    useEffect(()=>{
+        if(userAuth!==false){
+            get_cart();
+        }
+    },[cart]);
     const [profileDropdown,setProfiledropdown]=useState(false);
     const navItems = [
         {
@@ -68,15 +73,27 @@ const Navbar = (props) => {
                     <div onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
+                    <button className="p-2 ml-1 text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 z-10">
+                    <MdOutlineSearch/>
+                    </button>
                     <button className="p-2 ml-1 text-xl rounded-md md:hidden
                      focus:outline-none focus:ring-2 focus:ring-gray-200 z-10 ">
                         {!openNav ? <FaBars  onClick={()=>setOpenNav(true)} /> : <MdOutlineClose onClick={()=>{setOpenNav(false)}}/>}
+                    </button>
+                </div>
+                <div className="absolute w-full bg-black bg-opacity-40 left-0 top-0">
+                <button className="p-2 ml-1 text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 z-10">
+                    <MdOutlineSearch/>
                     </button>
                 </div>
                 <div className={`${openNav ? "right-0" : "-right-[100%]"} top-0 border border-l-gray-400 md:border-none bg-gray-100 md:bg-none
                  transition-all duration-300 md:h-auto h-full shadow-xl md:shadow-none fixed md:static md:justify-between items-center w-[50%]
                   flex-col md:items-center md:flex-row flex md:w-auto md:order-1 md:space-x-8 space-y-6 md:space-y-0 pt-8 md:pt-0`}>
                     <ul className="flex flex-col items-center space-y-5 md:space-y-0 font-medium md:flex-row md:space-x-8 mt-20 md:mt-0">
+                    <div className="hidden md:block relative ">
+                    <MdOutlineSearch className="absolute top-2.5 left-2 text-gray-600 text-[20px]"/>
+                    <input type="text" className="text-[16px] px-2 py-1 pl-8 rounded-lg w-full bg-gray-200 border border-gray-700" placeholder="Search..."></input>
+                    </div>
                         {navItems.map((item, index) => {
                             return (
                                 <li key={index} onClick={()=>handleLinks()}>

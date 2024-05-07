@@ -5,14 +5,18 @@ from flask_login import LoginManager,current_user,login_required,login_user,logo
 from models import *
 from datetime import date,datetime
 import os
+from flask_msearch import Search
 app=Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///'+ os.path.join(basedir, 'ecomm.db')
 app.config['SECRET_KEY']="gsjg2"
+app.config['WHOOSH_BASE']='whoosh'
 app.app_context().push()
 db.init_app(app)
 bcrypt=Bcrypt(app)
+search = Search(db=db)
+search.init_app(app)
 login_manager_user=LoginManager()
 login_manager_user.init_app(app)
 login_manager_user.login_view='/user/login'
@@ -66,9 +70,6 @@ def user_logout():
     logout_user()
     return {"message":"Logout successful"}
 
-@app.route("/image/<string:path>")
-def image_file():
-    return send_file()
 
 for i in Orders.query.filter_by(status='pending').all():
     if(i.date_delivery<=str(date.today())):

@@ -2,3 +2,4 @@ flask
 flask-sqlalchemy
 flask-security
 flask-bcrypt
+flask-msearch

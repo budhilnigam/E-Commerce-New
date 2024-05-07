@@ -1,7 +1,8 @@
 from __main__ import app,current_user
 from models import *
 from flask import jsonify,json,request,send_file,url_for
-from sqlalchemy import func
+from sqlalchemy import func,or_
+
 
 def queryconverter(query):
     result=[]
@@ -161,4 +162,10 @@ def delete_from_wishlist():
 def send_image(name):
     return send_file("./uploads/"+name)
 
-
+@app.route("/search/<string:q>")
+def search(q):
+    query=q
+    products=db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Categories.category_name,func.count(Orders.order_id).label('order_count')).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(or_(Products.product_name.contains(query),Products.brand.contains(query),Products.specs.contains(query),Categories.category_name.contains(query))).all()
+    products=dbqueryconverter(products)
+    print(products)
+    return {"products":products}
