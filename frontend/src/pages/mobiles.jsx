@@ -47,7 +47,7 @@ const Mobiles=(props)=>{
         }
     }
     return (
-        <div className='bg-gradient-to-b from-blue-50 to-blue-400'>
+        <div className='bg-gradient-to-b from-blue-50 to-blue-400 animate-fade'>
         <CarouselTransition/>
         <section className="py-20">
             <div className="container mx-auto">

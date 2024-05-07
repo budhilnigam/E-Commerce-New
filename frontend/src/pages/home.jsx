@@ -61,7 +61,7 @@ const Home=(props)=>{
         );
     }
     return (
-        <div className=" bg-gradient-to-b from-blue-50 to-blue-400">  
+        <div className=" bg-gradient-to-b from-blue-50 to-blue-400 animate-fade">  
             <div className="w-full mx-autoflex justify-between">
             <img src={HomePageImage}></img>
             </div>
