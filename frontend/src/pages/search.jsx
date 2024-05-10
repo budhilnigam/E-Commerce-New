@@ -2,31 +2,19 @@ import React, { useState, useEffect } from 'react';
 import Product from '../components/Product';
 const SearchPage = (props) => {
     const [searchResults, setSearchResults] = useState([]);
-    const [query, setQuery] = useState('');
+    const query=props.query;
+    const setQuery=props.setQuery;
     const [sort,setSort]=useState("Newest first");
     useEffect(() => {
-        const fetchData = async () => {
             try {
-                const response = await fetch('/api/search/'+query);
-                const data = await response.json();
-                setSearchResults(data.products);
+                fetch('/api/search/'+query).then(res=>res.json()).then(data=>{
+                    setSearchResults(data.products);
+                })
             } catch (error) {
                 console.error('Error fetching search results:', error);
             }
-        };
-
-        if (query) {
-            fetchData();
-        }
     }, [query]);
-
-    const handleSearch = (event) => {
-        event.preventDefault();
-        // Get the search query from the user input
-        const userInput = event.target.elements.searchQuery.value;
-        setQuery(userInput);
-    };
-    
+    useEffect(()=>{},[searchResults]);
     useEffect(()=>{},[sort]);
     function sortedResults(e){
         setSort(e.target.value);
@@ -42,10 +30,6 @@ const SearchPage = (props) => {
     }
     return (
         <div className='bg-gradient-to-b from-blue-50 to-blue-400 animate-fade'>
-        <form onSubmit={handleSearch}>
-                <input type="text" name="searchQuery" placeholder="Enter your search query" />
-                <button type="submit">Search</button>
-        </form>
         <section className="py-20">
             <div className="container mx-auto">
             <h1 className="text-3xl font-semibold mb-10 text-center">Explore Our Products</h1>

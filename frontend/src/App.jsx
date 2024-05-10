@@ -16,9 +16,10 @@ import { useState,useEffect } from 'react'
 import CheckoutPage from './pages/UserDashboard/checkout'
 import SearchPage from './pages/search'
 function App() {
-  const [userAuth, setUserAuth] = useState(false)
-  const [sellerAuth,setSellerAuth]=useState(false)
-  const [cart,setCart]=useState(false)
+  const [userAuth, setUserAuth] = useState(false);
+  const [sellerAuth,setSellerAuth]=useState(false);
+  const [cart,setCart]=useState(false);
+  const [query,setQuery]=useState('');
   useEffect(()=>{fetch('/api/user').then((res)=>res.json()).then(data=>{
     if (data.status=='authenticated'){
         setUserAuth(data.user_id);
@@ -30,7 +31,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <Navbar userAuth={userAuth} setUserAuth={setUserAuth} cart={cart} setCart={setCart}/>
+      <Navbar userAuth={userAuth} setUserAuth={setUserAuth} cart={cart} setCart={setCart} query={query} setQuery={setQuery}/>
         <Routes>
           <Route path='/' element={<Home cart={cart} setCart={setCart} />}></Route>
           <Route path='/laptops' element={<Laptops cart={cart} setCart={setCart}/>}></Route>
@@ -43,7 +44,7 @@ function App() {
           <Route path='/cart' element={<Cart cart={cart} setCart={setCart}/>}></Route>
           <Route path='/wishlist' element={<Wishlist/>}></Route>
           <Route path='/checkout' element={<CheckoutPage/>}></Route>
-          <Route path='/search' element={<SearchPage cart={cart} setCart={setCart}/>}></Route>
+          <Route path='/search' element={<SearchPage cart={cart} setCart={setCart} query={query} setQuery={setQuery}/>}></Route>
         </Routes>
         <Footer/>
       </BrowserRouter>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, redirect } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {MdOutlineClose,MdOutlineSearch} from "react-icons/md";
 import { GiProcessor } from "react-icons/gi";
@@ -49,6 +49,8 @@ const Navbar = (props) => {
         }
     },[cart]);
     const [profileDropdown,setProfiledropdown]=useState(false);
+    const query=props.query;
+    const setQuery=props.setQuery;
     const navItems = [
         {
             name: "Home",
@@ -63,17 +65,26 @@ const Navbar = (props) => {
             url: "/mobiles",
         },
     ]
+    const handleSearch = (event) => {
+        setQuery(event.target.value);
+    };
+    function handleEnter(e){
+        if(e.keyCode=='13'){
+            console.log("Enter");
+            redirect("/search");
+        }
+    }
     let timeout;
     return (
         <header className=" sticky top-0 z-10">
-        <nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-28">
+        {!opensearchbox?<nav className="bg-gray-100 shadow-xl px-4 md:px-16 w-full top-0 h-28">
             <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl text-2xl my-auto h-full ">
                 <Link to="/" className="flex flex-row items-center">
                     <GiProcessor onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}} className="mr-1 text-yellow-700 text-4xl" alt="Logo" />
                     <div onClick={()=>setActiveLink("/")} style={{"fontFamily":"Papyrus"}}>ElectroMart</div>
                 </Link>
                 <div className="flex md:hidden items-center md:order-2">
-                    <button className="p-2 ml-1 text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 z-10">
+                    <button className="p-2 ml-1 text-2xl rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 z-10" onClick={()=>setOpensearchbox(true)}>
                     <MdOutlineSearch/>
                     </button>
                     <button className="p-2 ml-1 text-xl rounded-md md:hidden
@@ -81,19 +92,16 @@ const Navbar = (props) => {
                         {!openNav ? <FaBars  onClick={()=>setOpenNav(true)} /> : <MdOutlineClose onClick={()=>{setOpenNav(false)}}/>}
                     </button>
                 </div>
-                <div className="absolute w-full bg-black bg-opacity-40 left-0 top-0">
-                <button className="p-2 ml-1 text-xl rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 z-10">
-                    <MdOutlineSearch/>
-                    </button>
-                </div>
+                <div className="hidden md:block relative w-1/3 ">
+                    <MdOutlineSearch className="absolute top-2.5 left-2 text-gray-600 text-[20px]"/>
+                    <Link to={"/search"}><button className="absolute text-[16px] right-0 top-0 h-full bg-gray-400 p-0.5 px-2 border border-gray-700 rounded-r-md">Search</button></Link>
+                    <input type="text" onChange={(e)=>{handleSearch(e)}} value={query} className="text-[16px] px-2 py-1 pl-8 rounded-lg w-full bg-gray-200 border border-gray-700" placeholder="Search..."></input>
+                    </div>
                 <div className={`${openNav ? "right-0" : "-right-[100%]"} top-0 border border-l-gray-400 md:border-none bg-gray-100 md:bg-none
                  transition-all duration-300 md:h-auto h-full shadow-xl md:shadow-none fixed md:static md:justify-between items-center w-[50%]
                   flex-col md:items-center md:flex-row flex md:w-auto md:order-1 md:space-x-8 space-y-6 md:space-y-0 pt-8 md:pt-0`}>
                     <ul className="flex flex-col items-center space-y-5 md:space-y-0 font-medium md:flex-row md:space-x-8 mt-20 md:mt-0">
-                    <div className="hidden md:block relative ">
-                    <MdOutlineSearch className="absolute top-2.5 left-2 text-gray-600 text-[20px]"/>
-                    <input type="text" className="text-[16px] px-2 py-1 pl-8 rounded-lg w-full bg-gray-200 border border-gray-700" placeholder="Search..."></input>
-                    </div>
+                    
                         {navItems.map((item, index) => {
                             return (
                                 <li key={index} onClick={()=>handleLinks()}>
@@ -170,7 +178,19 @@ const Navbar = (props) => {
                     </ul>
                 </div>
             </div>
-        </nav>
+        </nav>:
+        <div className="absolute top-0 left-0 w-full">
+            <div className="absolute w-full bg-gray-100 bg-opacity-100 h-20 left-0 top-0 border-b border-b-gray-400 justify-center items-center flex z-20">
+                <div className="relative mx-auto w-5/6">
+                    <MdOutlineSearch className="absolute top-2.5 left-2 text-gray-600 text-[20px]"/>
+                    <Link to={"/search"}><button className="absolute text-[16px] right-0 top-0 h-full bg-gray-400 p-0.5 px-2 border border-gray-700 rounded-r-md">Search</button></Link>
+                    <input type="text" onChange={(e)=>{handleSearch(e)}} value={query} className="text-[16px] px-2 py-1 pl-8 w-full rounded-lg mx-auto bg-gray-300 border border-gray-700 placeholder-gray-600 " placeholder="Search..."></input>
+                </div>
+            </div>
+            <div onClick={()=>{setOpensearchbox(false) }} className="absolute top-20 w-full h-screen bg-black z-30 bg-opacity-50">
+            </div>
+            <div></div>
+        </div>}
     </header>
     );
 }
