@@ -36,7 +36,6 @@ def user_signup():
     username=response['username']
     email_id=response['email_id']
     password=response['password']
-    print(response)
     if Users.query.filter_by(email_id=email_id).first():
         return {"message":"Another account is already using this Email ID!"},302
     else:

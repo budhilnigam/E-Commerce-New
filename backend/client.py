@@ -35,7 +35,6 @@ def list_of_products(category):
     if category=="all":
         products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Products.rating,func.count(Orders.order_id).label('order_count')).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).all())
     elif category=="laptops":
-        #print(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.brand,Products.rating).filter(Categories.category_name=='laptop').all())
         products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Products.rating,func.count(Orders.order_id).label('order_count')).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(Categories.category_name=='laptop').all())
     elif category=="mobiles":
         products=dbqueryconverter(db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Products.rating,func.count(Orders.order_id)).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(Categories.category_name=='mobiles').all())
@@ -49,7 +48,6 @@ def product_details(product_id):
     
 @app.route("/dashboard/aboutuser")
 def about_user():
-    #print(singlequeryconverter(Users.query.filter_by(user_id=current_user.user_id).first()))
     if Users.query.filter_by(user_id=current_user.user_id).first().addr_id!=None:
         return dbqueryconverter(db.session.query(Users.user_name,Users.email_id,Addresses.line1,Addresses.line2,Addresses.city,Addresses.state,Addresses.pincode).join(Addresses).filter(Users.user_id==current_user.user_id).all())[0]
     else:
@@ -97,7 +95,6 @@ def user_orders():
 @app.route("/order",methods=['GET','POST'])
 def place_order():
     response=request.get_json()
-    print('a',response)
     product_id=response['product_id']
     quantity=response['quantity']
     price=response['price']
@@ -167,5 +164,4 @@ def search(q):
     query=q
     products=db.session.query(Products.product_id,Products.product_name,Products.product_image,Products.price,Products.mrp,Products.specs,Products.stock,Products.brand,Categories.category_name,func.count(Orders.order_id).label('order_count')).join(Categories,Products.category_id==Categories.category_id).outerjoin(Orders,Orders.product_id==Products.product_id).group_by(Products.product_id).filter(or_(Products.product_name.contains(query),Products.brand.contains(query),Products.specs.contains(query),Categories.category_name.contains(query))).all()
     products=dbqueryconverter(products)
-    print(products)
     return {"products":products}
