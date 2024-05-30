@@ -6,12 +6,14 @@ from models import *
 from datetime import date,datetime
 import os
 from flask_msearch import Search
+from flask_cors import CORS
 app=Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///'+ os.path.join(basedir, 'ecomm.db')
 app.config['SECRET_KEY']="gsjg2"
 app.config['WHOOSH_BASE']='whoosh'
+cors=CORS(app)
 app.app_context().push()
 db.init_app(app)
 bcrypt=Bcrypt(app)
